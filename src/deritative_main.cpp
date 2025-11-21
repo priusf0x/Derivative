@@ -17,6 +17,8 @@ main()
 
     int error_number = 0;
 
+    StartLatexDocument(NULL);
+
     if ((error_number = DeritativeInit(&deritative, start_tree_size, 
                                         formula_file_name)) != 0)
     {   
@@ -30,6 +32,8 @@ main()
     WriteInLatex(deritative, 0, NULL);
 
     DeritativeDestroy(&deritative);
+
+    EndLatexDocument(NULL);
 
     return 0;
 } 

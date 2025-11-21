@@ -9,7 +9,6 @@
 
 static const char* latex_log_file_name = "logs/latex_dump.tex"; 
 
-
 void static 
 WriteConstInFile(deritative_t deritative,
                  size_t       current_node, 
@@ -30,10 +29,9 @@ GetLatexLogFile();
 
 // ============================= LOGGING_IN_FILE ==============================
 
-
 static void
 WriteExpression(deritative_t deritative,
-                ssize_t       current_node,
+                ssize_t      current_node,
                 FILE*        output_file);
 
 void
@@ -61,6 +59,7 @@ WriteInLatex(deritative_t deritative,
     }
 
     WriteExpression(deritative, (ssize_t) current_node, output_file);
+
 }
 
 // =========================== FILE_USAGE =====================================
@@ -87,6 +86,50 @@ void static
 WriteSubExpression(deritative_t deritative,
                    ssize_t      current_node,
                    FILE*        output_file);
+
+void 
+StartLatexDocument(FILE* output_file)
+{
+    if (output_file == NULL)
+    {
+        output_file = GetLatexLogFile();
+        if (output_file == NULL)
+        {   
+            return;
+        }
+    }
+
+    const char* header_text = R"(
+    \documentclass[a4paper,10pt]{article}
+    \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+    \usepackage[utf8]{inputenc}
+    \usepackage[T2A]{fontenc}
+    \usepackage[russian]{babel}
+    \usepackage{amsmath,amsfonts,amssymb}
+    \usepackage{float}
+    \begin{document})";
+    
+    fprintf(output_file, "%s", header_text);
+}
+
+void 
+EndLatexDocument(FILE* output_file)
+{
+    if (output_file == NULL)
+    {
+        output_file = GetLatexLogFile();
+        if (output_file == NULL)
+        {   
+            return;
+        }
+    }
+
+    const char* end_text = "\\end{document}\n";
+
+    fprintf(output_file, "%s", end_text);
+
+    SystemCall("latexmk %s -bibtex -f -c -pdf ", latex_log_file_name);
+}
 
 void static 
 WriteConstInFile(deritative_t deritative,
