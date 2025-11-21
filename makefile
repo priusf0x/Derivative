@@ -1,4 +1,4 @@
-SOURCES = common/simple_parser.cpp tree/tree.cpp stack/stack.cpp common/tools.cpp tree/tree_dump.cpp deritative_main.cpp
+SOURCES = common/simple_parser.cpp tree/tree.cpp stack/stack.cpp common/tools.cpp tree/tree_dump.cpp deritative_main.cpp mathematics/deritative.cpp common/my_string.cpp
 
 OBJ_DIR = obj
 SOURCE_DIR = src

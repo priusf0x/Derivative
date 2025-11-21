@@ -5,7 +5,6 @@
 
 #include "Assert.h"
 #include "stack.h"
-#include "ariphmetic_operations.h"
 
 static tree_return_e SetTreeSize(tree_t tree, size_t  new_size);
 static tree_return_e NumerizeElements(tree_t tree, size_t start_index);

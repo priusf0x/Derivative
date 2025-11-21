@@ -6,7 +6,7 @@
 #include "Assert.h"
 #include "tools.h"
 #include "stack.h"
-#include "ariphmetic_operations.h"
+#include "expression.h"
 
 static tree_return_e TreeDot(const tree_t tree, const char* current_time);
 static void DrawNode(const node_s* node, FILE* dot_file);

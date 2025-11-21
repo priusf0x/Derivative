@@ -2,7 +2,7 @@
 #define TREE_H
 
 #include <stdio.h>
-#include "ariphmetic_operations.h"
+#include "expression.h"
 
 enum edge_dir_e
 {
