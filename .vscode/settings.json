@@ -8,6 +8,14 @@
         "ranges": "cpp",
         "span": "cpp",
         "stacktrace": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "atomic": "cpp",
+        "type_traits": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "*.inc": "cpp"
     }
 }

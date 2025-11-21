@@ -15,7 +15,9 @@ enum operations_e
     OPERATOR_PLUS       = 1,
     OPERATOR_MINUS      = 2,
     OPERATOR_MUL        = 3,
-    OPERATOR_DIV        = 4
+    OPERATOR_DIV        = 4,
+    OPERATOR_SIN        = 5,
+    OPERATOR_COS        = 6
 };
 
 const char* const  OPERATION_STR_ARRAY[] = 
