@@ -7,7 +7,7 @@ SOURCES = derivative_main.cpp \
 		  tree/tree_dump.cpp \
 		  mathematics/derivative.cpp \
 		  mathematics/latex_dump.cpp \
-# 		  mathematics/take_derivative.cpp
+		  mathematics/take_derivative.cpp
 
 OBJ_DIR = obj
 SOURCE_DIR = src

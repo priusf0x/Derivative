@@ -173,13 +173,13 @@ CheckTreeNode(tree_t  tree,
         return INVALID_NODE;
     }
     else if ((child_left != NO_LINK) && (output |= CHILD_LEFT_USAGE)
-              && (child_left == (ssize_t) node->index_in_tree
+              && (tree->nodes_array[child_left].parent_connection == EDGE_DIR_NO_DIRECTION
                   || child_left == 0))
     {
         return INVALID_NODE;
     }
     else if ((child_right != NO_LINK) && (output |= CHILD_RIGHT_USAGE)
-              && (child_right == (ssize_t) node->index_in_tree
+              && (tree->nodes_array[child_right].parent_connection == EDGE_DIR_NO_DIRECTION
                   || child_right == 0))
     {
         return INVALID_NODE;
@@ -375,7 +375,6 @@ CopySubgraph(tree_t     tree,
     if ((output = CopyNode(tree, parent_dest_index, 
             src_index, &dest_index, direction)) != TREE_RETURN_SUCCESS)
     {
-        MEOW;
         return output;
     }
 

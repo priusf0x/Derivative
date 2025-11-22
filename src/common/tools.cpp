@@ -61,3 +61,16 @@ SystemCall(const char* command_tmp,
 
     va_end(command_args);
 }
+
+bool
+IsInteger(double number)
+{
+    const double epsilon = 0.000001;
+
+    if (fabs(round(number) - number) < epsilon)
+    {
+        return true;
+    }
+
+    return false;
+}

@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "Assert.h"
 #include "derivative.h"
@@ -143,9 +144,17 @@ WriteConstInFile(derivative_t deritative,
     ASSERT(deritative  != NULL);
     ASSERT(output_file != NULL);
     
-    fprintf(output_file, "%f", 
-            deritative->ariphmetic_tree->
-                nodes_array[current_node].node_value.expression.constant);
+    double number = deritative->ariphmetic_tree->
+                nodes_array[current_node].node_value.expression.constant;
+
+    if(IsInteger(number))
+    {
+        fprintf(output_file, "%ld", (long) number);
+    }
+    else
+    {
+        fprintf(output_file, "%f", number);
+    }
 }
 
 void static 
@@ -178,38 +187,38 @@ WriteOperationInFile(derivative_t deritative,
     {
         case OPERATOR_PLUS:
             WriteSubExpression(deritative, node.left_index, output_file);
-            fprintf(output_file, "+");
+            fprintf(output_file, " + ");
             WriteSubExpression(deritative, node.right_index, output_file);
             break;
 
         case OPERATOR_MINUS:    
             WriteSubExpression(deritative, node.left_index, output_file);
-            fprintf(output_file, "-");
+            fprintf(output_file, " - ");
             WriteSubExpression(deritative, node.right_index, output_file);
             break;
 
         case OPERATOR_MUL:
             WriteSubExpression(deritative, node.left_index, output_file);
-            fprintf(output_file, "\\times");
+            fprintf(output_file, " \\times ");
             WriteSubExpression(deritative, node.right_index, output_file);
             break;
 
         case OPERATOR_DIV: 
             fprintf(output_file, "{");
             WriteExpression(deritative, node.left_index, output_file);
-            fprintf(output_file, "\\over");
+            fprintf(output_file, " \\over ");
             WriteExpression(deritative, node.right_index, output_file);
             fprintf(output_file, "}");
             break;
 
         case OPERATOR_SIN:
-            fprintf(output_file, "\\sin{");
+            fprintf(output_file, " \\sin{ ");
             WriteSubExpression(deritative, node.left_index, output_file);
             fprintf(output_file, "}");
             break;
 
         case OPERATOR_COS:
-            fprintf(output_file, "\\cos{");
+            fprintf(output_file, " \\cos{ ");
             WriteSubExpression(deritative, node.left_index, output_file);
             fprintf(output_file, "}");
             break;
