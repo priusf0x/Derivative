@@ -5,6 +5,7 @@
 #include "latex_dump.h"
 #include "tree.h"
 #include "tools.h"
+#include "latex_dump.h"
 
 static void TakeVarDerivative(derivative_t derivative, ssize_t current_node);
 
@@ -73,10 +74,7 @@ TakeDerivative(derivative_t derivative,
 
     TreeDump(derivative->ariphmetic_tree);
 
-    if (current_node == NO_LINK)
-    {
-        return TAKE_DERIVATIVE_INCORRECT_EXPRESSION;
-    }
+    CHECK_INDEX;
 
     expression_s node_value = derivative->ariphmetic_tree->nodes_array[current_node].node_value;
 
@@ -234,7 +232,7 @@ TakeMulDerivative(derivative_t derivative,
 
 static take_derivative_return_e
 TakeSinDerivative(derivative_t derivative,
-                  ssize_t       current_node)
+                  ssize_t      current_node)
 {
     ASSERT(derivative != 0);
 

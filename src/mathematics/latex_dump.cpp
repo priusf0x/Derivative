@@ -186,9 +186,9 @@ WriteOperationInFile(derivative_t deritative,
     switch(expr.expression.operation)
     {
         case OPERATOR_PLUS:
-            WriteSubExpression(deritative, node.left_index, output_file);
+            WriteExpression(deritative, node.left_index, output_file);
             fprintf(output_file, " + ");
-            WriteSubExpression(deritative, node.right_index, output_file);
+            WriteExpression(deritative, node.right_index, output_file);
             break;
 
         case OPERATOR_MINUS:    
@@ -212,14 +212,14 @@ WriteOperationInFile(derivative_t deritative,
             break;
 
         case OPERATOR_SIN:
-            fprintf(output_file, " \\sin{ ");
             WriteSubExpression(deritative, node.left_index, output_file);
+            fprintf(output_file, " \\sin{ ");
             fprintf(output_file, "}");
             break;
 
         case OPERATOR_COS:
-            fprintf(output_file, " \\cos{ ");
             WriteSubExpression(deritative, node.left_index, output_file);
+            fprintf(output_file, " \\cos{ ");
             fprintf(output_file, "}");
             break;
             

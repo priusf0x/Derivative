@@ -29,9 +29,9 @@ main()
 
     LogDeritativeInLatex(deritative, 0, NULL);
 
-    TakeDerivative(deritative, deritative->ariphmetic_tree->nodes_array[0].left_index);
     
-    TreeDump(deritative->ariphmetic_tree);
+    TakeDerivative(deritative, deritative->ariphmetic_tree->nodes_array[0].left_index);
+
     LogDeritativeInLatex(deritative, 0, NULL);
 
     DerivativeDestroy(&deritative);

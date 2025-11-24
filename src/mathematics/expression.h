@@ -17,7 +17,8 @@ enum operations_e
     OPERATOR_MUL        = 3,
     OPERATOR_DIV        = 4,
     OPERATOR_SIN        = 5,
-    OPERATOR_COS        = 6
+    OPERATOR_COS        = 6,
+    OPERATOR_POWER      = 7
 };
 
 const char* const  OPERATION_STR_ARRAY[] = 
@@ -27,7 +28,8 @@ const char* const  OPERATION_STR_ARRAY[] =
      "*",
      "/",
      "sin",
-     "cos"};
+     "cos",
+     "^"};
 const size_t OPERATION_COUNT = sizeof(OPERATION_STR_ARRAY) / sizeof(OPERATION_STR_ARRAY[0]);
 
 // struct variable_e
