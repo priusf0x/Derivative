@@ -34,6 +34,8 @@ main()
 
     LogDeritativeInLatex(deritative, 0, NULL);
 
+    TreeDump(deritative->ariphmetic_tree);
+
     DerivativeDestroy(&deritative);
 
     EndLatexDocument(NULL);

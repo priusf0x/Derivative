@@ -16,14 +16,14 @@ static void TakeVarDerivative(derivative_t derivative, ssize_t current_node);
 #define PARENT_INDEX(__X)  derivative->ariphmetic_tree->nodes_array[__X].parent_index
 #define PARENT_CONNECTION(__X)  derivative->ariphmetic_tree->nodes_array[__X].parent_connection
 
-#define CHECK_INDEX \ 
+#define CHECK_INDEX \
     if (current_node == NO_LINK)\
     {\
         return TAKE_DERIVATIVE_UNDEFINED_FUNCTION;\
     }
 
 #define INSERT(__PARENT, __OP, __HOW) \
-    do {take_derivative_return_e output = TAKE_DERIVATIVE_RETURN_SUCCESS;\ 
+    do {take_derivative_return_e output = TAKE_DERIVATIVE_RETURN_SUCCESS;\
         if ((output = InsertAfterOperator(derivative, __PARENT, \
         __OP, __HOW)) != TAKE_DERIVATIVE_RETURN_SUCCESS)\
         {\
@@ -31,7 +31,7 @@ static void TakeVarDerivative(derivative_t derivative, ssize_t current_node);
         }\
         } while (0)
 
-#define COPY(__DST, __SRC, __HOW) \ 
+#define COPY(__DST, __SRC, __HOW) \
     do {if (CopySubgraph(derivative->ariphmetic_tree, (size_t) __DST, \
         (size_t) __SRC, __HOW) != 0)\
         {\
@@ -80,7 +80,7 @@ TakeDerivative(derivative_t derivative,
 
     if (node_value.expression_type == EXPRESSION_TYPE_CONST)
     {
-        DeleteSubgraph(derivative->ariphmetic_tree, current_node);
+        DeleteSubgraph(derivative->ariphmetic_tree, (size_t) current_node);
 
         return TAKE_DERIVATIVE_RETURN_SUCCESS;
     }
@@ -252,3 +252,13 @@ TakeSinDerivative(derivative_t derivative,
     return TAKE_DERIVATIVE_RETURN_SUCCESS;
 }
 
+// ============================== UNDEFINITION ================================
+
+#undef RIGHT_INDEX
+#undef LEFT_INDEX  
+#undef PARENT_INDEX  
+#undef PARENT_CONNECTION  
+#undef CHECK_INDEX 
+#undef INSERT 
+#undef COPY 
+#undef D 

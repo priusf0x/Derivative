@@ -273,6 +273,62 @@ ConnectNodes(tree_t  tree,
 
 // ============================ ELEMENTS_ACTIONS ==============================
 
+tree_return_e 
+ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR AND NODE VALIDATOR
+             size_t     current_index,
+             size_t     new_parent,
+             edge_dir_e new_direction)
+{
+    ASSERT(tree);
+
+    node_s* current_node = &(tree->nodes_array[current_index]);
+    node_s* node_array = tree->nodes_array;
+
+    if (new_direction == EDGE_DIR_NO_DIRECTION)
+    {
+        return TREE_RETURN_INCORRECT_VALUE;
+    }
+
+    if (current_node->parent_connection == EDGE_DIR_LEFT)
+    {
+        node_array[current_node->parent_index].left_index = NO_LINK;
+    }
+    else if (current_node->parent_connection == EDGE_DIR_RIGHT)
+    {
+        node_array[current_node->parent_index].right_index = NO_LINK;
+    }
+
+    tree_return_e output = TREE_RETURN_SUCCESS;
+
+    if (new_direction == EDGE_DIR_LEFT)
+    {
+        if ((output = DeleteSubgraph(tree, (size_t) node_array[new_parent].left_index)) 
+            != TREE_RETURN_SUCCESS)
+        {
+            return output;
+        } 
+
+        node_array[new_parent].left_index = (ssize_t) current_index;
+        current_node->parent_connection = EDGE_DIR_LEFT;
+        
+    }
+    else if (new_direction == EDGE_DIR_RIGHT)
+    {
+        if ((output = DeleteSubgraph(tree, (size_t) node_array[new_parent].right_index)) 
+            != TREE_RETURN_SUCCESS)
+        {
+            return output;
+        } 
+
+        node_array[new_parent].right_index = (ssize_t) current_index;
+        current_node->parent_connection = EDGE_DIR_RIGHT;
+    }
+
+    current_node->parent_index = (ssize_t) new_parent;
+
+    return TREE_RETURN_SUCCESS;
+}
+
 tree_return_e
 DeleteSubgraph(tree_t tree,
                size_t node_index)
