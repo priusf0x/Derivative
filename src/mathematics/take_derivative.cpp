@@ -127,8 +127,6 @@ TakeDerivative(derivative_t derivative,
         }
     }
 
-    SimplifyNeutralMultipliers(deritative, 1);
-
     return TAKE_DERIVATIVE_RETURN_SUCCESS;
 }
 

@@ -14,13 +14,13 @@ int
 main()
 {
     const size_t start_tree_size = 1; 
-    derivative_t deritative = NULL;
+    derivative_t derivative = NULL;
 
     int error_number = 0;
 
     StartLatexDocument(NULL);
 
-    if ((error_number = DerivativeInit(&deritative, start_tree_size, 
+    if ((error_number = DerivativeInit(&derivative, start_tree_size, 
                                         formula_file_name)) != 0)
     {   
         printf("huyna %d\n", error_number);
@@ -28,15 +28,17 @@ main()
         return error_number;
     }
 
-    LogDeritativeInLatex(deritative, 0, NULL);
+    LogDeritativeInLatex(derivative, 0, NULL);
     
-    TakeDerivative(deritative, deritative->ariphmetic_tree->nodes_array[0].left_index);
+    TakeDerivative(derivative, derivative->ariphmetic_tree->nodes_array[0].left_index);
 
-    LogDeritativeInLatex(deritative, 0, NULL);
+    SimplifyNeutralMultipliers(derivative, 1);
 
-    TreeDump(deritative->ariphmetic_tree);
+    LogDeritativeInLatex(derivative, 0, NULL);
 
-    DerivativeDestroy(&deritative);
+    TreeDump(derivative->ariphmetic_tree);
+
+    DerivativeDestroy(&derivative);
 
     EndLatexDocument(NULL);
 
