@@ -161,7 +161,7 @@ CheckTreeNode(tree_t  tree,
     if ((parent >= (ssize_t) tree->nodes_capacity)     // check user's values
         || (child_left >= (ssize_t) tree->nodes_capacity)
         || (child_right > (ssize_t) tree->nodes_capacity))
-    {
+    {MEOW;
         return INVALID_NODE;
     }
     else if (node->parent_connection == EDGE_DIR_NO_DIRECTION)
