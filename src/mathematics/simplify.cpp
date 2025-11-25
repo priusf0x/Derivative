@@ -9,7 +9,7 @@
 
 static simplify_return_e 
 SimplifyMultiplicationOnNull(derivative_t derivative,
-                             ssize_t      current_node);
+                             ssize_t*     current_node);
 
 static bool
 CheckIfConstNum(const derivative_t derivative,
@@ -25,6 +25,10 @@ static simplify_return_e
 SimplifyMultiplicationOnOne(derivative_t derivative,
                             ssize_t      current_node);
 
+static simplify_return_e
+SimplifySubstractWithNull(derivative_t derivative,
+                          size_t       current_node);
+
 simplify_return_e
 SimplifyNeutralMultipliers(derivative_t derivative,
                            ssize_t      current_node)
@@ -38,27 +42,37 @@ SimplifyNeutralMultipliers(derivative_t derivative,
 
     TreeDump(derivative->ariphmetic_tree);
 
-    node_s* node = &(derivative->ariphmetic_tree->nodes_array[current_node]);
+    node_s node = derivative->ariphmetic_tree->nodes_array[current_node];
 
-    if (node->right_index != NO_LINK)
+    if (node.right_index != NO_LINK)
     {
-        SimplifyNeutralMultipliers(derivative, node->right_index);
+        SimplifyNeutralMultipliers(derivative, node.right_index);
     }
-    if (node->left_index != NO_LINK)
+    if (node.left_index != NO_LINK)
     {
-        SimplifyNeutralMultipliers(derivative, node->left_index);
+        SimplifyNeutralMultipliers(derivative, node.left_index);
     }
 
     simplify_return_e output = SIMPLIFY_RETURN_SUCCESS;
-
-    if (node->node_value.expression_type == EXPRESSION_TYPE_OPERATOR)
+    if (current_node == NO_LINK)
     {
-        if (node->node_value.expression.operation == OPERATOR_MUL)
+        return SIMPLIFY_RETURN_INCORRECT_VALUE;
+    }
+
+    if (node.node_value.expression_type == EXPRESSION_TYPE_OPERATOR)
+    {
+        if (node.node_value.expression.operation == OPERATOR_MUL)
         {
-            if ((output = SimplifyMultiplicationOnNull(derivative, current_node))
+            if ((output = SimplifyMultiplicationOnNull(derivative, &current_node))
                 != SIMPLIFY_RETURN_SUCCESS)
             {
                 return output;
+            }
+
+            if (CheckIfEqual(derivative->ariphmetic_tree->nodes_array[current_node]
+                                .node_value.expression.constant, 0))
+            {
+                return SIMPLIFY_RETURN_SUCCESS;
             }
 
             if ((output = SimplifyMultiplicationOnOne(derivative, current_node))
@@ -66,15 +80,37 @@ SimplifyNeutralMultipliers(derivative_t derivative,
             {
                 return output;
             }
-
-            return SIMPLIFY_RETURN_SUCCESS;
         }
 
-        if (node->node_value.expression.operation == OPERATOR_PLUS)
+        if (node.node_value.expression.operation == OPERATOR_PLUS)
         {
-            return SimplifySumWithNull(derivative, current_node);
+            if ((output = SimplifySumWithNull(derivative, current_node))
+                != SIMPLIFY_RETURN_SUCCESS)
+            {
+                return output;
+            }
+        }
+
+        if (node.node_value.expression.operation == OPERATOR_MINUS)
+        {
+            if ((output = SimplifySubstractWithNull(derivative, current_node))
+                != SIMPLIFY_RETURN_SUCCESS)
+            {
+                return output;
+            }
         }
     }
+
+    return SIMPLIFY_RETURN_SUCCESS;
+}
+
+simplify_return_e
+SimplifyDoubles(derivative_t derivative,
+                ssize_t      current_node)
+{
+    ASSERT(derivative != NULL);
+
+
 
     return SIMPLIFY_RETURN_SUCCESS;
 }
@@ -83,21 +119,16 @@ SimplifyNeutralMultipliers(derivative_t derivative,
 
 static simplify_return_e 
 SimplifyMultiplicationOnNull(derivative_t derivative,
-                             ssize_t      current_node)
+                             ssize_t*     current_node)
 {
     ASSERT(derivative != NULL);
 
-    node_s* node = &(derivative->ariphmetic_tree->nodes_array[current_node]);
+    node_s* node = &(derivative->ariphmetic_tree->nodes_array[*current_node]);
 
     if (!(CheckIfConstNum(derivative, node->right_index, 0) 
         || CheckIfConstNum(derivative, node->left_index, 0))) 
     {
         return SIMPLIFY_RETURN_SUCCESS;
-    }
-
-    if (current_node == NO_LINK)
-    {
-        return SIMPLIFY_RETURN_INCORRECT_VALUE;
     }
 
     node_s zero_node = {};
@@ -108,7 +139,7 @@ SimplifyMultiplicationOnNull(derivative_t derivative,
     zero_node.node_value = {.expression = {.constant = 0}, 
                             .expression_type = EXPRESSION_TYPE_CONST};
 
-    if (DeleteSubgraph(derivative->ariphmetic_tree, current_node) != 0)
+    if (DeleteSubgraph(derivative->ariphmetic_tree, *current_node) != 0)
     {
         return SIMPLIFY_RETURN_TREE_ERROR;
     }
@@ -117,6 +148,8 @@ SimplifyMultiplicationOnNull(derivative_t derivative,
     {
         return SIMPLIFY_RETURN_TREE_ERROR;
     }
+
+    *current_node = (ssize_t) zero_node.index_in_tree;
 
     return SIMPLIFY_RETURN_SUCCESS;
 }
@@ -132,22 +165,18 @@ SimplifySumWithNull(derivative_t derivative,
     if (CheckIfConstNum(derivative, node.right_index, 0))      
     {
         if (ForceConnect(derivative->ariphmetic_tree, node.left_index, 
-                            node.parent_index, node.parent_connection) != 0)
+                         node.parent_index, node.parent_connection) != 0)
         {
             return SIMPLIFY_RETURN_TREE_ERROR;
         }   
-
-        return SIMPLIFY_RETURN_SUCCESS;
     }
-    if (CheckIfConstNum(derivative, node.left_index, 0))      
+    else if (CheckIfConstNum(derivative, node.left_index, 0))      
     {
         if (ForceConnect(derivative->ariphmetic_tree, node.right_index, 
-                        node.parent_index, node.parent_connection) != 0)
+                         node.parent_index, node.parent_connection) != 0)
         {
             return SIMPLIFY_RETURN_TREE_ERROR;
         }   
-
-        return SIMPLIFY_RETURN_SUCCESS;
     }
 
     return SIMPLIFY_RETURN_SUCCESS;
@@ -161,28 +190,52 @@ SimplifyMultiplicationOnOne(derivative_t derivative,
 
     node_s node = derivative->ariphmetic_tree->nodes_array[current_node];
 
-    if (CheckIfConstNum(derivative, node.right_index , 1))      
+    if (CheckIfConstNum(derivative, node.right_index, 1))      
     {
         if (ForceConnect(derivative->ariphmetic_tree, node.left_index, 
                             node.parent_index, node.parent_connection) != 0)
         {
             return SIMPLIFY_RETURN_TREE_ERROR;
         }   
-
-        return SIMPLIFY_RETURN_SUCCESS;
     }
-    if (CheckIfConstNum(derivative, node.left_index, 1))      
+    else if (CheckIfConstNum(derivative, node.left_index, 1))      
     {
         if (ForceConnect(derivative->ariphmetic_tree, node.right_index, 
                         node.parent_index, node.parent_connection) != 0)
         {
             return SIMPLIFY_RETURN_TREE_ERROR;
         }   
-
-        return SIMPLIFY_RETURN_SUCCESS;
     }
+
     return SIMPLIFY_RETURN_SUCCESS;
 }
+
+static simplify_return_e
+SimplifySubstractWithNull(derivative_t derivative,
+                          size_t       current_node)
+{
+    ASSERT(derivative != NULL);
+
+    node_s node = derivative->ariphmetic_tree->nodes_array[current_node];
+    node_s* node_array = derivative->ariphmetic_tree->nodes_array;
+ 
+    if (CheckIfConstNum(derivative, node.right_index , 0))      
+    {
+        if (ForceConnect(derivative->ariphmetic_tree, node.left_index, 
+                            node.parent_index, node.parent_connection) != 0)
+        {
+            return SIMPLIFY_RETURN_TREE_ERROR;
+        }
+    }
+    else if (CheckIfConstNum(derivative, node.left_index, 0))      
+    {
+        node_array[node.left_index].node_value.expression.constant = -1;
+        node_array[current_node].node_value.expression.operation = OPERATOR_MUL;
+    }
+
+    return SIMPLIFY_RETURN_SUCCESS;
+}
+
 
 static bool
 CheckIfConstNum(const derivative_t derivative,

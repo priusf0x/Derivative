@@ -74,7 +74,7 @@ TakeDerivative(derivative_t derivative,
 {
     ASSERT(derivative != NULL);
 
-    TreeDump(derivative->ariphmetic_tree);
+    // TreeDump(derivative->ariphmetic_tree);
 
     CHECK_INDEX;
 
