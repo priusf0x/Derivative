@@ -18,6 +18,7 @@ enum operations_e
     OPERATOR_DIV        = 4,
     OPERATOR_SIN        = 5,
     OPERATOR_COS        = 6,
+    OPERATOR_POWER      = 7
 };
 
 const char* const  OPERATION_STR_ARRAY[] = 

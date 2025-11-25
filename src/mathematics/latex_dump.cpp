@@ -221,7 +221,14 @@ WriteOperationInFile(derivative_t deritative,
             WriteSubExpression(deritative, node.left_index, output_file);
             fprintf(output_file, "}");
             break;
-            
+
+        case OPERATOR_POWER:
+            WriteSubExpression(deritative, node.left_index, output_file); 
+            fprintf(output_file, "^{ ");
+            WriteExpression(deritative, node.right_index, output_file);
+            fprintf(output_file, "}");
+            break;
+
         case OPERATOR_UNDEFINED:
             fprintf(output_file, "%s", undefined_message);
             break;

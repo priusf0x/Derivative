@@ -1,1 +1,1 @@
-("+"("x" (nil nil) "*" ("*" ("1"(nil nil) "x" (nil nil)) "-" ("sin"("x" (nil nil) nil) "x"(nil nil)))) nil)
+("+"("x" (nil nil) "/" ("*" ("1"(nil nil) "x" (nil nil)) "-" ("cos"("x" (nil nil) nil) "x"(nil nil)))) nil)
