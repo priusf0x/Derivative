@@ -12,7 +12,6 @@ enum take_derivative_return_e
     TAKE_DERIVATIVE_INVALID_VALUE
 };
 
-
-take_derivative_return_e TakeDerivative(derivative_t derivative, ssize_t current_node);
+ssize_t TakeDerivative(derivative_t derivative, ssize_t current_node);
 
 #endif //TAKE_DERIVATIVE_H

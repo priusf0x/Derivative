@@ -66,8 +66,8 @@ tree_return_e TreeBaseDump(const tree_t tree, FILE* file_output);
 // ============================== BYPASS_FUNCTIONS ============================
 
 tree_return_e DeleteSubgraph(tree_t tree, ssize_t node_index);
-tree_return_e CopySubgraph(tree_t tree, ssize_t* parent_dest_index, ssize_t src_index,
-                           edge_dir_e direction);
+tree_return_e CopySubgraph(tree_t tree, ssize_t parent_dest_index, ssize_t src_index,
+                           ssize_t* new_index, edge_dir_e direction);
 tree_return_e 
 ForceConnect(tree_t tree, ssize_t current_index, ssize_t new_parent, 
             edge_dir_e new_direction);

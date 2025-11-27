@@ -8,7 +8,8 @@ SOURCES = derivative_main.cpp \
 		  mathematics/derivative.cpp \
 		  mathematics/latex_dump.cpp \
 		  mathematics/take_derivative.cpp \
-		  mathematics/simplify.cpp
+		  mathematics/simplify.cpp\
+		  mathematics/derivative_defines.cpp
 
 OBJ_DIR = obj
 SOURCE_DIR = src
@@ -71,7 +72,7 @@ test:
 build: TARGET
 
 logclean:
-	@rm -rf logs
+	@rm -rf logs/*
 	@echo "Cleaned Logs Successfully"
 
 clean:

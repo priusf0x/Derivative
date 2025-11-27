@@ -120,7 +120,6 @@ PrintElementsInfo(const tree_t tree,
 {
     ASSERT(tree != NULL);
     ASSERT(file_output != NULL);
-
     for(size_t index = 0; index < tree->nodes_capacity; index++) 
     {
         fprintf(file_output, "<p> <h4> <li>index in table: %zu\n <br/>", tree->nodes_array[index].index_in_tree);

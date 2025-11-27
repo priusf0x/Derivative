@@ -32,11 +32,11 @@ main()
     
     TakeDerivative(derivative, derivative->ariphmetic_tree->nodes_array[0].left_index);
 
-    SimplifyNeutralMultipliers(derivative, 1);
+    SimplifyNeutralMultipliers(derivative, 0);
 
     LogDeritativeInLatex(derivative, 0, NULL);
 
-    // TreeDump(derivative->ariphmetic_tree);
+    TreeDump(derivative->ariphmetic_tree);
 
     DerivativeDestroy(&derivative);
 

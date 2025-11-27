@@ -123,7 +123,7 @@ TreeAddNode(tree_t  tree,
 
     uint8_t children_usage = 0b0000'0000;
     if((children_usage = CheckTreeNode(tree, node)) == INVALID_NODE)
-    {
+    { 
         return TREE_RETURN_INVALID_NODE;
     }
 
@@ -154,8 +154,6 @@ CheckTreeNode(tree_t  tree,
 
     ssize_t child_left = node->left_index;
     ssize_t child_right = node->right_index;
-    ssize_t parent = node->parent_index;
-
     uint8_t output = 0b0000'0000;
 
     if ((child_left != NO_LINK) && (output |= CHILD_LEFT_USAGE)
@@ -238,6 +236,7 @@ ConnectNodes(tree_t  tree,
     }
 
     memcpy(tree->nodes_array + node->index_in_tree, node, sizeof(node_s));
+ 
 
     return TREE_RETURN_SUCCESS;
 }
@@ -393,29 +392,30 @@ CopyNode(tree_t     tree,
 
 tree_return_e 
 CopySubgraph(tree_t     tree,
-             ssize_t*   parent_dest_index,
+             ssize_t    parent_dest_index,
              ssize_t    src_index,
+             ssize_t*   new_index,
              edge_dir_e direction)
 {
     ASSERT(tree != NULL);
-    ASSERT(parent_dest_index != NULL);
 
     node_s current_node = tree->nodes_array[src_index];
 
     tree_return_e output = TREE_RETURN_SUCCESS;
-    ssize_t dest_index = 0;
+    ssize_t dest_index = NO_LINK;
 
-    if ((output = CopyNode(tree, *parent_dest_index, 
-            src_index, &dest_index, direction)) != TREE_RETURN_SUCCESS)
+    if ((output = CopyNode(tree, parent_dest_index, 
+                src_index, &dest_index, direction)) != TREE_RETURN_SUCCESS)
     {
         return output;
     }
 
+    TreeDump(tree);
+
     if (current_node.left_index != NO_LINK)
     {
-        if ((output = CopySubgraph(tree, &dest_index, 
-                                    current_node.left_index, EDGE_DIR_LEFT)) 
-            != TREE_RETURN_SUCCESS)
+        if ((output = CopySubgraph(tree, dest_index, current_node.left_index, 
+            NULL, EDGE_DIR_LEFT)) != TREE_RETURN_SUCCESS)
         {
             return TREE_RETURN_SUCCESS;
         }
@@ -423,15 +423,17 @@ CopySubgraph(tree_t     tree,
 
     if (current_node.right_index != NO_LINK)
     {
-        if ((output = CopySubgraph(tree, &dest_index,
-                                    current_node.right_index, EDGE_DIR_RIGHT)) 
-            != TREE_RETURN_SUCCESS)
+        if ((output = CopySubgraph(tree, dest_index, current_node.right_index, 
+            NULL, EDGE_DIR_RIGHT)) != TREE_RETURN_SUCCESS)
         {
             return TREE_RETURN_SUCCESS;
         }
     }
 
-    *parent_dest_index = dest_index;
+    if (new_index != NULL)
+    {
+        *new_index = dest_index;
+    }
 
     return TREE_RETURN_SUCCESS;
 }
@@ -445,19 +447,20 @@ CopyNode(tree_t     tree,
 {
     ASSERT(tree != NULL);
 
-    if ((src_index == NO_LINK) || (dest_parent_index == NO_LINK))
+    if (src_index == NO_LINK)
     {
         return TREE_RETURN_INCORRECT_VALUE;
     }
     
     node_s cpy_node = tree->nodes_array[src_index];
+
     cpy_node.left_index = NO_LINK;
     cpy_node.right_index = NO_LINK;
     cpy_node.parent_index = (ssize_t) dest_parent_index;
     cpy_node.parent_connection = direction;
 
     tree_return_e output = TREE_RETURN_SUCCESS;
-    
+
     if ((output = TreeAddNode(tree, &cpy_node)) != TREE_RETURN_SUCCESS)
     {
         return output;

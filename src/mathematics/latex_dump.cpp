@@ -58,7 +58,7 @@ LogDeritativeInLatex(derivative_t deritative,
     {
         current_node = (size_t) node.left_index;
     }
-
+    
     fprintf(output_file, "\\begin{equation}{\n ");
     WriteExpression(deritative, (ssize_t) current_node, output_file);
     fprintf(output_file, "\n} \\end{equation}\n");
@@ -181,7 +181,6 @@ WriteOperationInFile(derivative_t deritative,
     expression_s expr = node.node_value;
 
     const char* undefined_message = "undefined blyat";
-
     switch(expr.expression.operation)
     {
         case OPERATOR_PLUS:
@@ -258,12 +257,10 @@ WriteExpression(derivative_t deritative,
 {
     ASSERT(deritative != NULL);
     ASSERT(output_file != NULL);
-
     if (current_node == NO_LINK)
     {
         return;
     }
-
     node_s node = deritative->ariphmetic_tree->nodes_array[current_node];
 
     switch(node.node_value.expression_type)
@@ -298,6 +295,7 @@ WriteSubExpression(derivative_t deritative,
 
     if (current_node == NO_LINK)
     {
+
         return;
     }
 
