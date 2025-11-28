@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "derivative.h"
+#include "tree.h"
 
 ssize_t
 DerivativeAddNode(derivative_t derivative, ssize_t current_node,
@@ -12,15 +13,20 @@ ssize_t
 DerivativeCopy(derivative_t derivative, ssize_t src);
 
 ssize_t 
+DerivativeAddConst(derivative_t derivative, double value);
+
+ssize_t 
 DerivativeAddOperation(derivative_t derivative, ssize_t first_node, 
                        ssize_t second_node, operations_e operation);
 
 // ================================ DEFINE ====================================
 
+#define RIGHT_INDEX(__X) derivative->ariphmetic_tree->nodes_array[__X].right_index
+#define LEFT_INDEX(__X)  derivative->ariphmetic_tree->nodes_array[__X].left_index
+
 #define REPLACE(_X_) do {ssize_t output = (_X_);\
-                         ForceConnect(derivative->ariphmetic_tree, output,\
-                                      PARENT_INDEX(current_node),\
-                                      PARENT_CONNECTION(current_node));\
+                         DeleteSubgraph(derivative->ariphmetic_tree,\
+                                        current_node);\
                          return output;\
                         } while (0);
 
@@ -30,8 +36,10 @@ DerivativeAddOperation(derivative_t derivative, ssize_t first_node,
 #define cR COPY(RIGHT_INDEX(current_node))
 #define cL COPY(LEFT_INDEX(current_node))
 
+#define CONST(_CONST_) DerivativeAddConst(derivative, (_CONST_))   
+
 #define SUM(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
-                                                      (_SECOND_), OPERATOR_PLUS)
+                                                     (_SECOND_), OPERATOR_PLUS)\
 
 #define SUB(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_MINUS)
@@ -45,4 +53,13 @@ DerivativeAddOperation(derivative_t derivative, ssize_t first_node,
 #define POW(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_POWER)
 
+#define SIN(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+                                                      NO_LINK, OPERATOR_SIN)
+
+#define COS(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+                                                      NO_LINK, OPERATOR_COS)
+
+#define EXP(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+                                                      NO_LINK, OPERATOR_EXP)
+                                                    
 #endif // DERIVATIVE_DEFINES

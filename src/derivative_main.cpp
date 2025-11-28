@@ -30,13 +30,14 @@ main()
 
     LogDeritativeInLatex(derivative, 0, NULL);
     
-    TakeDerivative(derivative, derivative->ariphmetic_tree->nodes_array[0].left_index);
+    ssize_t output = TakeDerivative(derivative, derivative->ariphmetic_tree->nodes_array[0].left_index);
+    derivative->ariphmetic_tree->nodes_array[0].left_index = output;
 
     SimplifyNeutralMultipliers(derivative, 0);
 
-    LogDeritativeInLatex(derivative, 0, NULL);
+    // LogDeritativeInLatex(derivative, 0, NULL);
 
-    TreeDump(derivative->ariphmetic_tree);
+    // TreeDump(derivative->ariphmetic_tree);
 
     DerivativeDestroy(&derivative);
 

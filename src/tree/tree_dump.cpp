@@ -129,11 +129,8 @@ PrintElementsInfo(const tree_t tree,
         const size_t max_string_size = 30;
         char element_string[max_string_size] = "sosal";
 
-        if (tree->nodes_array[index].parent_connection != EDGE_DIR_NO_DIRECTION)
-        {
-            PrintElementInString(&tree->nodes_array[index].node_value,
-                                 element_string, max_string_size); 
-        }
+        PrintElementInString(&tree->nodes_array[index].node_value,
+                             element_string, max_string_size); 
 
         fprintf(file_output, "value: %s", element_string);
         fprintf(file_output, "<br/>");
@@ -171,7 +168,8 @@ TreeDot(const tree_t tree,
 
     for (size_t index = 1; index < tree->nodes_capacity; index++)
     {
-        if (tree->nodes_array[index].parent_connection != EDGE_DIR_NO_DIRECTION)
+        if (tree->nodes_array[index].node_value.expression_type 
+            != EXPRESSION_TYPE_UNDEFINED)
         {
             DrawNode(tree->nodes_array + index, dot_file);
         }

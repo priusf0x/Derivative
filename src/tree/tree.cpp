@@ -323,12 +323,8 @@ DeleteSubgraph(tree_t tree,
     {
         return TREE_RETURN_STACK_ERROR;
     }
-
-    if (tree->nodes_array[node_index].parent_connection == EDGE_DIR_NO_DIRECTION)
-    {
-        return TREE_RETURN_INVALID_NODE;
-    }
-    else if (tree->nodes_array[node_index].parent_connection == EDGE_DIR_RIGHT)
+    
+    if (tree->nodes_array[node_index].parent_connection == EDGE_DIR_RIGHT)
     {
         tree->nodes_array[tree->nodes_array[node_index].parent_index].right_index = NO_LINK;
     }
@@ -410,7 +406,9 @@ CopySubgraph(tree_t     tree,
         return output;
     }
 
-    TreeDump(tree);
+    #ifndef NDEBUG
+        TreeDump(tree);
+    #endif 
 
     if (current_node.left_index != NO_LINK)
     {
@@ -452,10 +450,11 @@ CopyNode(tree_t     tree,
         return TREE_RETURN_INCORRECT_VALUE;
     }
     
-    node_s cpy_node = tree->nodes_array[src_index];
+    node_s cpy_node = {};
 
     cpy_node.left_index = NO_LINK;
     cpy_node.right_index = NO_LINK;
+    cpy_node.node_value = tree->nodes_array[src_index].node_value;
     cpy_node.parent_index = (ssize_t) dest_parent_index;
     cpy_node.parent_connection = direction;
 
@@ -465,7 +464,7 @@ CopyNode(tree_t     tree,
     {
         return output;
     }
-
+    
     *dest_index = (ssize_t) cpy_node.index_in_tree;
 
     return TREE_RETURN_SUCCESS; 

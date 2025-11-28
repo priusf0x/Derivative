@@ -43,6 +43,24 @@ DerivativeCopy(derivative_t derivative,
 }
 
 ssize_t 
+DerivativeAddConst(derivative_t derivative,
+                   double       value)
+{
+    ASSERT(derivative != NULL);
+
+    node_s op_node = {.parent_index  = NO_LINK,
+                      .right_index   = NO_LINK,
+                      .left_index    = NO_LINK,
+                      .node_value    = {.expression = {.constant = value},
+                                        .expression_type = EXPRESSION_TYPE_CONST},
+                      .index_in_tree = 0};    
+
+    TreeAddNode(derivative->ariphmetic_tree, &op_node);
+
+    return (ssize_t) op_node.index_in_tree;
+}
+
+ssize_t 
 DerivativeAddOperation(derivative_t derivative,
                        ssize_t      first_node,
                        ssize_t      second_node,
@@ -54,12 +72,10 @@ DerivativeAddOperation(derivative_t derivative,
                       .right_index   = second_node,
                       .left_index    = first_node,
                       .node_value    = {.expression = {.operation = operation},
-                                        .expression_type      = EXPRESSION_TYPE_OPERATOR},
-                      .index_in_tree = 0};
+                                        .expression_type = EXPRESSION_TYPE_OPERATOR},
+                      .index_in_tree = 0};    
 
     TreeAddNode(derivative->ariphmetic_tree, &op_node);
-
-    //NOTE -  add verificator
 
     return (ssize_t) op_node.index_in_tree;
 }
