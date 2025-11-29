@@ -122,7 +122,7 @@ PrintElementsInfo(const tree_t tree,
     ASSERT(file_output != NULL);
     for(size_t index = 0; index < tree->nodes_capacity; index++) 
     {
-        fprintf(file_output, "<p> <h4> <li>index in table: %zu\n <br/>", tree->nodes_array[index].index_in_tree);
+        fprintf(file_output, "<p> <h4> <li>index in table: %ld\n <br/>", tree->nodes_array[index].index_in_tree);
         fprintf(file_output, "left index: %ld \n <br/>", tree->nodes_array[index].left_index);
         fprintf(file_output, "right index: %ld\n <br/>", tree->nodes_array[index].right_index);
 
@@ -226,12 +226,12 @@ DrawNode(const node_s* node,
             break;
 
         case EXPRESSION_TYPE_OPERATOR:        
-            fprintf(dot_file, "%zu[fillcolor = \"%s\"]", node->index_in_tree, 
+            fprintf(dot_file, "%ld[fillcolor = \"%s\"]", node->index_in_tree, 
                     operator_color);
             break;
 
         case EXPRESSION_TYPE_VAR:
-            fprintf(dot_file, "%zu[fillcolor = \"%s\"]", node->index_in_tree, 
+            fprintf(dot_file, "%ld[fillcolor = \"%s\"]", node->index_in_tree, 
                     var_color);
             break;
 
@@ -240,12 +240,12 @@ DrawNode(const node_s* node,
 
     if (node->left_index != NO_LINK)
     {
-        fprintf(dot_file, "%zu -- %ld;\n", node->index_in_tree, node->left_index);
+        fprintf(dot_file, "%ld -- %ld;\n", node->index_in_tree, node->left_index);
     }
 
     if (node->right_index != NO_LINK)
     {
-        fprintf(dot_file, "%zu -- %ld;\n", node->index_in_tree, node->right_index);
+        fprintf(dot_file, "%ld -- %ld;\n", node->index_in_tree, node->right_index);
     }
 
 }

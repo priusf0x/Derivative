@@ -96,7 +96,7 @@ NumerizeElements(tree_t tree,
 
     for(size_t index = start_index; index < tree->nodes_capacity; index++)
     {
-        tree->nodes_array[index].index_in_tree = index;
+        tree->nodes_array[index].index_in_tree = (ssize_t) index;
         tree->nodes_array[index].parent_index = (ssize_t) index + 1;
         ClearNode(tree, index);
     }
@@ -132,7 +132,7 @@ TreeAddNode(tree_t  tree,
         return TREE_RETURN_ALLOCATION_ERROR;
     }
 
-    node->index_in_tree = (size_t) tree->nodes_array[0].parent_index;
+    node->index_in_tree = tree->nodes_array[0].parent_index;
     tree->nodes_array[0].parent_index =
         tree->nodes_array[node->index_in_tree].parent_index;
 
@@ -455,7 +455,7 @@ CopyNode(tree_t     tree,
     cpy_node.left_index = NO_LINK;
     cpy_node.right_index = NO_LINK;
     cpy_node.node_value = tree->nodes_array[src_index].node_value;
-    cpy_node.parent_index = (ssize_t) dest_parent_index;
+    cpy_node.parent_index = dest_parent_index;
     cpy_node.parent_connection = direction;
 
     tree_return_e output = TREE_RETURN_SUCCESS;

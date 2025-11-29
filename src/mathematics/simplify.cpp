@@ -15,7 +15,7 @@ CheckIfOperator(const derivative_t derivative,
           ssize_t            current_node);
 static bool
 CheckIfConst(const derivative_t derivative,   
-           ssize_t            current_node);
+             ssize_t            current_node);
 static bool
 CheckIfConstNum(const derivative_t derivative,
                 ssize_t            current_node,

@@ -12,6 +12,8 @@ struct string_s
     size_t string_size;
 };
 
+typedef string_s* string_t;
+
 enum read_return_e 
 {
     READ_RETURN_SUCCESS,
@@ -22,17 +24,14 @@ enum read_return_e
     READ_RETURN_BAD_MNEMONIC
 };
 
-
 // =========================== STRING_HANDLER_HELPERS =========================
 
 size_t SkipSpaces(const char* string, size_t current_position);
 size_t SkipNotSpaces(const char* string, size_t current_position);
-read_return_e ReadName(string_s* string_name, char* input_buffer, size_t* current_position);
 void PrintString(const string_s* string, FILE* file_output);
-bool CheckIfSymbol(char* string, size_t* current_position, char symbol);
-operations_e CheckIfStrOperator(string_s* string);
-char CheckIfStrVar(string_s* string);
-bool CheckIfStrDouble(string_s* string, double* number);
+void StringDestroy(string_s* string);
+bool ExStrCmp(const char* string, const char* example,  
+              size_t lenght, const char* end_symbols);
 
 // ============================================================================
 

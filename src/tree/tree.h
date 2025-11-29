@@ -32,7 +32,7 @@ struct node_s
     ssize_t     right_index;
     ssize_t     left_index;
     node_data_t node_value;
-    size_t      index_in_tree;
+    ssize_t     index_in_tree;
 };
 
 struct tree_s

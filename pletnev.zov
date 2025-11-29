@@ -1,1 +1,1 @@
-("/" ("x" (nil nil) "exp" ("+" ("sin" ("x" (nil nil) nil) "cos" ("x" (nil nil) nil)) nil           )) nil)
+200 * 50 + 60 * 20 / (x ^ sin(33 + y) - 21)   

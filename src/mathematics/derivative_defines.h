@@ -19,6 +19,9 @@ ssize_t
 DerivativeAddOperation(derivative_t derivative, ssize_t first_node, 
                        ssize_t second_node, operations_e operation);
 
+ssize_t 
+DerivativeAddVar(derivative_t derivative, char value); 
+
 // ================================ DEFINE ====================================
 
 #define RIGHT_INDEX(__X) derivative->ariphmetic_tree->nodes_array[__X].right_index
@@ -37,6 +40,7 @@ DerivativeAddOperation(derivative_t derivative, ssize_t first_node,
 #define cL COPY(LEFT_INDEX(current_node))
 
 #define CONST(_CONST_) DerivativeAddConst(derivative, (_CONST_))   
+#define VAR(_VAR_)     DerivativeAddVar(derivative, (_VAR_))
 
 #define SUM(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                      (_SECOND_), OPERATOR_PLUS)\

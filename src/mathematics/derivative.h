@@ -6,20 +6,16 @@
 #include "tree.h"
 #include "expression.h"
 #include "my_string.h"
+#include "buffer.h"
 
 // ======================== ARIPHMETIC_FUNCTION_ENUM ==========================
 
 enum derivative_return_e 
 {
     DERIVATIVE_RETURN_SUCCESS,
-    DERIVATIVE_RETURN_SYSTEM_CALL_ERROR,
+    DERIVATIVE_RETURN_READ_ERROR,
     DERIVATIVE_RETURN_TREE_ERROR,
-    DERIVATIVE_RETURN_OPEN_FILE_ERROR,
-    DERIVATIVE_RETURN_READ_FILE_ERROR,
-    DERIVATIVE_RETURN_CLOSE_FILE_ERROR,
-    DERIVATIVE_RETURN_EMPTY_FILE,
-    DERIVATIVE_RETURN_ALLOCATION_ERROR,
-    DERIVATIVE_RETURN_MISSING_SYMBOL
+    DERIVATIVE_RETURN_ALLOCATION_ERROR
 };
 
 // ========================== STRUCTS_AND_UNIONS ==============================
@@ -27,7 +23,7 @@ enum derivative_return_e
 struct derivative_s
 {
     tree_t ariphmetic_tree;
-    char*  buffer;
+    buffer_t buffer;
 };
 
 typedef derivative_s* derivative_t;

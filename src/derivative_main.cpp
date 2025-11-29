@@ -7,6 +7,7 @@
 #include "latex_dump.h"
 #include "take_derivative.h"
 #include "simplify.h"
+#include "recursive_decent.h"
 
 static const char* formula_file_name = "pletnev.zov";
 
@@ -18,8 +19,6 @@ main()
 
     int error_number = 0;
 
-    StartLatexDocument(NULL);
-
     if ((error_number = DerivativeInit(&derivative, start_tree_size, 
                                         formula_file_name)) != 0)
     {   
@@ -28,20 +27,9 @@ main()
         return error_number;
     }
 
-    LogDeritativeInLatex(derivative, 0, NULL);
-    
-    ssize_t output = TakeDerivative(derivative, derivative->ariphmetic_tree->nodes_array[0].left_index);
-    derivative->ariphmetic_tree->nodes_array[0].left_index = output;
-
-    SimplifyNeutralMultipliers(derivative, 0);
-
-    // LogDeritativeInLatex(derivative, 0, NULL);
-
-    // TreeDump(derivative->ariphmetic_tree);
+    ConvertToGraph(derivative);
 
     DerivativeDestroy(&derivative);
-
-    EndLatexDocument(NULL);
 
     return 0;
 } 

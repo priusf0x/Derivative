@@ -3,6 +3,7 @@
 #include "Assert.h"
 #include "derivative.h"
 #include "expression.h"
+#include "tools.h"
 
 #define PARENT_INDEX(__X)  derivative->ariphmetic_tree->nodes_array[__X].parent_index
 #define PARENT_CONNECTION(__X)  derivative->ariphmetic_tree->nodes_array[__X].parent_connection
@@ -21,7 +22,7 @@ DerivativeAddNode(derivative_t      derivative,
                        .right_index       = NO_LINK,
                        .left_index        = NO_LINK,
                        .node_value        = *expr,
-                       .index_in_tree     = 0};
+                       .index_in_tree     = NO_LINK};
 
     TreeAddNode(derivative->ariphmetic_tree, &new_node);
 
@@ -53,9 +54,28 @@ DerivativeAddConst(derivative_t derivative,
                       .left_index    = NO_LINK,
                       .node_value    = {.expression = {.constant = value},
                                         .expression_type = EXPRESSION_TYPE_CONST},
-                      .index_in_tree = 0};    
+                      .index_in_tree = NO_LINK};    
 
     TreeAddNode(derivative->ariphmetic_tree, &op_node);
+
+    return (ssize_t) op_node.index_in_tree;
+}
+
+ssize_t 
+DerivativeAddVar(derivative_t derivative,
+                 char         value)                   //FIXME -  char usage  
+{
+    ASSERT(derivative != NULL);
+
+    node_s op_node = {.parent_index  = NO_LINK,
+                      .right_index   = NO_LINK,
+                      .left_index    = NO_LINK,
+                      .node_value    = {.expression = {.variable = value},
+                                        .expression_type = EXPRESSION_TYPE_VAR},
+                      .index_in_tree = NO_LINK};    
+
+    TreeAddNode(derivative->ariphmetic_tree, &op_node);
+
 
     return (ssize_t) op_node.index_in_tree;
 }
@@ -73,7 +93,7 @@ DerivativeAddOperation(derivative_t derivative,
                       .left_index    = first_node,
                       .node_value    = {.expression = {.operation = operation},
                                         .expression_type = EXPRESSION_TYPE_OPERATOR},
-                      .index_in_tree = 0};    
+                      .index_in_tree = NO_LINK};    
 
     TreeAddNode(derivative->ariphmetic_tree, &op_node);
 
