@@ -11,7 +11,7 @@ SOURCES = derivative_main.cpp \
 		  mathematics/simplify.cpp\
 		  mathematics/derivative_defines.cpp\
 		  recursive_decent/buffer.cpp\
-		  recursive_decent/recursive_decent.cpp\
+		  recursive_decent/recursive_decent.cpp 
 
 OBJ_DIR = obj
 SOURCE_DIR = src

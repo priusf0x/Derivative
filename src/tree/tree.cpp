@@ -110,8 +110,8 @@ const uint8_t CHILD_RIGHT_USAGE = 0b0000'0001;
 const uint8_t CHILD_LEFT_USAGE = 0b0000'0010;
 const uint8_t INVALID_NODE =  0b0000'0100;
 
-static uint8_t CheckTreeNode(tree_s* tree, node_s* node);
-static tree_return_e ConnectNodes(tree_s* tree, node_s* node, uint8_t children_usage);
+static uint8_t CheckTreeChildren(tree_s* tree, node_s* node);
+static tree_return_e InitNode(tree_s* tree, node_s* node, uint8_t children_usage);
 static tree_return_e TreeNormilizeSize(tree_s* tree);
 
 tree_return_e
@@ -122,7 +122,7 @@ TreeAddNode(tree_t  tree,
     ASSERT(node != NULL);
 
     uint8_t children_usage = 0b0000'0000;
-    if((children_usage = CheckTreeNode(tree, node)) == INVALID_NODE)
+    if((children_usage = CheckTreeChildren(tree, node)) == INVALID_NODE)
     { 
         return TREE_RETURN_INVALID_NODE;
     }
@@ -136,7 +136,7 @@ TreeAddNode(tree_t  tree,
     tree->nodes_array[0].parent_index =
         tree->nodes_array[node->index_in_tree].parent_index;
 
-    ConnectNodes(tree, node, children_usage);
+    InitNode(tree, node, children_usage);
 
     tree->nodes_count++;
 
@@ -146,8 +146,8 @@ TreeAddNode(tree_t  tree,
 // ============================== ADD_NODES_HELPERS ===========================
 
 static uint8_t
-CheckTreeNode(tree_t  tree,
-              node_s* node)
+CheckTreeChildren(tree_t  tree,
+                  node_s* node)
 {
     ASSERT(tree != NULL);
     ASSERT(node != NULL);
@@ -186,66 +186,108 @@ TreeNormilizeSize(tree_t tree)
     return TREE_RETURN_SUCCESS;
 }
 
-static tree_return_e
-ConnectNodes(tree_t  tree,
-             node_s* node,
-             uint8_t children_usage)
+static void 
+ConnectGraphChild(tree_t     tree,
+                  node_s*    node,
+                  edge_dir_e connection)
 {
-    ASSERT(tree != NULL);
-    ASSERT(node != NULL);
-
-    node_s* right_element = tree->nodes_array + node->right_index;
-    node_s* left_element = tree->nodes_array + node->left_index;
-
-    if (children_usage & CHILD_RIGHT_USAGE)
+    node_s* child_node = NULL;
+    
+    switch (connection)
     {
-        if (right_element->parent_connection == EDGE_DIR_RIGHT)
-        {
-            tree->nodes_array[right_element->parent_index].right_index = NO_LINK;
-        }
-        else if (right_element->parent_connection == EDGE_DIR_LEFT)
-        {
-            tree->nodes_array[right_element->parent_index].left_index = NO_LINK;
-        }
+        case EDGE_DIR_RIGHT:
+            child_node = tree->nodes_array + node->right_index;
+            break;
 
-        right_element->parent_index = (ssize_t) node->index_in_tree;
-        right_element->parent_connection = EDGE_DIR_RIGHT;
+        case EDGE_DIR_LEFT:
+            child_node = tree->nodes_array + node->left_index;
+            break;
+
+        case EDGE_DIR_NO_DIRECTION:
+        default: return;
+    }
+
+    if (child_node->parent_connection == EDGE_DIR_RIGHT)
+    {
+        tree->nodes_array[child_node->parent_index].
+                                        right_index = NO_LINK;
+    }
+    else if (child_node->parent_connection == EDGE_DIR_LEFT)
+    {
+        tree->nodes_array[child_node->parent_index].
+                                        left_index = NO_LINK;
+    }
+
+    child_node->parent_index = (ssize_t) node->index_in_tree;
+    child_node->parent_connection = EDGE_DIR_RIGHT;
+}
+
+static tree_return_e
+InitNode(tree_t  tree,
+         node_s* node,
+         uint8_t children_usage)
+{
+    if (children_usage & CHILD_RIGHT_USAGE)
+    {  
+        ConnectGraphChild(tree, node, EDGE_DIR_RIGHT);
     }
     if (children_usage & CHILD_LEFT_USAGE)
-    {
-        if (left_element->parent_connection == EDGE_DIR_RIGHT)
-        {
-            tree->nodes_array[left_element->parent_index].right_index = NO_LINK;
-        }
-        else if (left_element->parent_connection == EDGE_DIR_LEFT)
-        {
-            tree->nodes_array[left_element->parent_index].left_index = NO_LINK;
-        }
-
-        left_element->parent_index = (ssize_t) node->index_in_tree;
-        left_element->parent_connection = EDGE_DIR_LEFT;
+    {   
+        ConnectGraphChild(tree, node, EDGE_DIR_LEFT);
     }
 
     if (node->parent_connection == EDGE_DIR_RIGHT)
     {
-        tree->nodes_array[node->parent_index].right_index = (ssize_t) node->index_in_tree;
+        tree->nodes_array[node->parent_index].right_index 
+            = (ssize_t) node->index_in_tree;
     }
     else if (node->parent_connection == EDGE_DIR_LEFT)
     {
-        tree->nodes_array[node->parent_index].left_index = (ssize_t) node->index_in_tree;
+        tree->nodes_array[node->parent_index].left_index 
+            = (ssize_t) node->index_in_tree;
     }
 
     memcpy(tree->nodes_array + node->index_in_tree, node, sizeof(node_s));
- 
 
     return TREE_RETURN_SUCCESS;
 }
 
-// ============================ ELEMENTS_ACTIONS ==============================
+// ========================= VERIFIVATION/VALIDATION ==========================
+
+static tree_return_e
+CheckNode(tree_t  tree,
+          ssize_t current_index)
+{
+    node_s current_node = tree->nodes_array[current_index];
+
+    if (current_index == NO_LINK)
+    {
+        return TREE_RETURN_INCORRECT_VALUE;
+    }
+    else if (current_index > (ssize_t) tree->nodes_capacity)
+    {
+        return TREE_RETURN_INCORRECT_VALUE;
+    }
+    else if ((current_index != 0) 
+            && ((current_node.parent_connection == EDGE_DIR_NO_DIRECTION)
+                && (current_node.right_index == NO_LINK) 
+                && (current_node.right_index == NO_LINK)))
+    {
+        return TREE_RETURN_INVALID_NODE;        
+    }
+
+    return TREE_RETURN_SUCCESS;
+}
+
+#define RETURN_IF_NODE_BAD(_X_) do {tree_return_e output = CheckNode(tree, _X_);\
+                                    if (output != TREE_RETURN_SUCCESS) return output;\
+                                    } while (0)
+
+// ========================== TREE_METHODS/FUNCTIONS ==========================
 
 tree_return_e 
-ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR AND NODE VALIDATOR
-             ssize_t    current_index,
+ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR 
+             ssize_t    current_index,  
              ssize_t    new_parent,
              edge_dir_e new_direction)
 {
@@ -254,10 +296,8 @@ ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR AND NODE VALIDATOR
     node_s* current_node = &(tree->nodes_array[current_index]);
     node_s* node_array = tree->nodes_array;
 
-    if ((current_index == NO_LINK) || (new_parent == NO_LINK))
-    {
-        return TREE_RETURN_INCORRECT_VALUE;
-    }
+    RETURN_IF_NODE_BAD(current_index);
+    RETURN_IF_NODE_BAD(new_parent);
 
     if (new_direction == EDGE_DIR_NO_DIRECTION)
     {
@@ -277,7 +317,8 @@ ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR AND NODE VALIDATOR
 
     if (new_direction == EDGE_DIR_LEFT)
     {
-        if ((output = DeleteSubgraph(tree, node_array[new_parent].left_index)) 
+        if ((node_array[new_parent].left_index != NO_LINK) &&
+            (output = DeleteSubgraph(tree, node_array[new_parent].left_index)) 
             != TREE_RETURN_SUCCESS)
         {
             return output;
@@ -285,11 +326,11 @@ ForceConnect(tree_t     tree, //NOTE -  MAKE VERIFICATOR AND NODE VALIDATOR
 
         node_array[new_parent].left_index = (ssize_t) current_index;
         current_node->parent_connection = EDGE_DIR_LEFT;
-        
     }
     else if (new_direction == EDGE_DIR_RIGHT)
     {
-        if ((output = DeleteSubgraph(tree, node_array[new_parent].right_index)) 
+        if ((node_array[new_parent].right_index != NO_LINK) &&
+            (output = DeleteSubgraph(tree, node_array[new_parent].right_index)) 
             != TREE_RETURN_SUCCESS)
         {
             return output;
@@ -469,3 +510,7 @@ CopyNode(tree_t     tree,
 
     return TREE_RETURN_SUCCESS; 
 }
+
+// ============================ UNDECLARATION ==================================
+
+#undef RETURN_IF_NODE_BAD

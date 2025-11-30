@@ -130,8 +130,8 @@ EndLatexDocument(FILE* output_file)
     fprintf(output_file, "%s", end_text);
 
     fclose(output_file);
-
-    SystemCall("pdflatex %s -f y 1>latex_output.log", latex_log_file_name);
+    
+    SystemCall("pdflatex %s -f y 1  > latex_output", latex_log_file_name);
     SystemCall("rm *.aux *.log >latex_output.log");
 }
 

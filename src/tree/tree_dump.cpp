@@ -110,7 +110,8 @@ PrintElementInString(const expression_s* expr,
             snprintf(address, string_length, "variable %c", expr->expression.variable);
             break;
 
-        default: break;
+        case EXPRESSION_TYPE_UNDEFINED:
+        default: return;
     }
 }
 
@@ -235,6 +236,7 @@ DrawNode(const node_s* node,
                     var_color);
             break;
 
+        case EXPRESSION_TYPE_UNDEFINED:
         default: break;
     }
 
@@ -247,7 +249,6 @@ DrawNode(const node_s* node,
     {
         fprintf(dot_file, "%ld -- %ld;\n", node->index_in_tree, node->right_index);
     }
-
 }
 
 #endif 

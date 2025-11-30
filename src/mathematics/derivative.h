@@ -15,7 +15,8 @@ enum derivative_return_e
     DERIVATIVE_RETURN_SUCCESS,
     DERIVATIVE_RETURN_READ_ERROR,
     DERIVATIVE_RETURN_TREE_ERROR,
-    DERIVATIVE_RETURN_ALLOCATION_ERROR
+    DERIVATIVE_RETURN_ALLOCATION_ERROR, 
+    DERIVATIVE_RETURN_UNDEFINED_OPERATION
 };
 
 // ========================== STRUCTS_AND_UNIONS ==============================
@@ -24,6 +25,7 @@ struct derivative_s
 {
     tree_t ariphmetic_tree;
     buffer_t buffer;
+    derivative_return_e error;
 };
 
 typedef derivative_s* derivative_t;

@@ -3,15 +3,6 @@
 
 #include "derivative.h"
 
-enum take_derivative_return_e
-{   
-    TAKE_DERIVATIVE_RETURN_SUCCESS,
-    TAKE_DERIVATIVE_UNDEFINED_FUNCTION,
-    TAKE_DERIVATIVE_TREE_ERROR,
-    TAKE_DERIVATIVE_INCORRECT_EXPRESSION,
-    TAKE_DERIVATIVE_INVALID_VALUE
-};
-
-ssize_t TakeDerivative(derivative_t derivative, ssize_t current_node);
+ssize_t TakeExpressionDerivative(derivative_t derivative, ssize_t current_node);
 
 #endif //TAKE_DERIVATIVE_H

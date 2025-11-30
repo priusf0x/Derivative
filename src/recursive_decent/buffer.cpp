@@ -90,17 +90,17 @@ BufferDump(const buffer_t buffer)
     {
         if (current_position == buffer->current_position)
         {
-            printf(GREEN);
-            putchar(buffer->buffer[current_position]);   
-            printf(STANDARD);
+            fprintf(stderr, GREEN);
+            putc(buffer->buffer[current_position], stderr);   
+            fprintf(stderr, STANDARD);
         }
         else 
         {
-            putchar(buffer->buffer[current_position]);
+            putc(buffer->buffer[current_position], stderr);
         }
 
         current_position++; 
     } 
     while (buffer->buffer[current_position] != '\0');
-    printf("\n");
+    fprintf(stderr, "\n");
 }

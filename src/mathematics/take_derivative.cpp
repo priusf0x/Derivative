@@ -64,22 +64,45 @@ TakeExpDerivative(derivative_t derivative,
                   ssize_t      current_node)
 { REPLACE(MUL(D(cL), EXP(cL))) }
 
-ssize_t (*d_operator[]) (derivative_t derivative, ssize_t current_node) =
+struct function_derivative_s
 {
-    TakePlusDerivative
+    operations_e operation;
+    ssize_t (*derivative) (derivative_t, ssize_t);
 };
+
+const function_derivative_s OP_DERIVATIVES[] =
+{//  OPERATIONS            DERIVATIVES
+    {OPERATOR_UNDEFINED,   NULL               },
+    {OPERATOR_PLUS     ,   TakePlusDerivative },
+    {OPERATOR_MINUS    ,   TakeMinusDerivative},
+    {OPERATOR_MUL      ,   TakeMulDerivative  },
+    {OPERATOR_DIV      ,   TakeDivDerivative  },
+    {OPERATOR_SIN      ,   TakeSinDerivative  },
+    {OPERATOR_COS      ,   TakeCosDerivative  },
+    {OPERATOR_POWER    ,   NULL               },
+    {OPERATOR_LN       ,   TakeLnDerivative   },
+    {OPERATOR_EXP      ,   TakeExpDerivative  }
+};
+const size_t DERIVATIVES_COUNT = sizeof(OP_DERIVATIVES) / sizeof(OP_DERIVATIVES[0]);
 
 // =========================== MAIN_DERIVATIVE ================================
 
-ssize_t 
-TakeDerivative(derivative_t derivative,
-               ssize_t      current_node)
+ssize_t  // TODO: make static and add main take derivative function
+TakeExpressionDerivative(derivative_t derivative,
+                         ssize_t      current_node)
 {
     ASSERT(derivative != NULL);
+    RETURN_NO_LINK_IF_ERROR;
 
     #ifndef NDEBUG
         TreeDump(derivative->ariphmetic_tree);
     #endif
+
+    if(current_node == 0)
+    {
+        current_node = derivative->ariphmetic_tree->
+                            nodes_array[current_node].left_index;
+    }
 
     expression_s node_value = derivative->ariphmetic_tree->
                                 nodes_array[current_node].node_value;
@@ -94,39 +117,15 @@ TakeDerivative(derivative_t derivative,
     }
     else if (node_value.expression_type == EXPRESSION_TYPE_OPERATOR)
     {
-        switch(node_value.expression.operation)
+        if (node_value.expression.operation == OPERATOR_UNDEFINED)
         {
-            case OPERATOR_PLUS:
-                return TakePlusDerivative(derivative, current_node);
-
-            case OPERATOR_MINUS:
-                return TakeMinusDerivative(derivative, current_node);
-
-            case OPERATOR_MUL:
-                return TakeMulDerivative(derivative, current_node);
-            
-            case OPERATOR_DIV:
-                return TakeDivDerivative(derivative, current_node);
-
-            case OPERATOR_SIN:
-                return TakeSinDerivative(derivative, current_node);
-
-            case OPERATOR_COS:
-                return TakeCosDerivative(derivative, current_node);
-
-            case OPERATOR_LN:
-                return TakeLnDerivative(derivative, current_node);
-
-            case OPERATOR_EXP:
-                return TakeExpDerivative(derivative, current_node);
-
-            case OPERATOR_POWER:
-                break;
-
-            case OPERATOR_UNDEFINED:
-            default: return NO_LINK;
+            derivative->error = DERIVATIVE_RETURN_UNDEFINED_OPERATION;
+            return NO_LINK;
         }
-    }
 
+        return OP_DERIVATIVES[node_value.expression.operation]
+                                        .derivative(derivative, current_node);
+    }
+    
     return NO_LINK;
 }

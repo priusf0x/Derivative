@@ -10,6 +10,7 @@
 #include "buffer.h"
 #include "tree.h"
 #include "tools.h"
+#include "color.h"
 
 // ============================= HELPERS ======================================
 
@@ -24,7 +25,7 @@ CheckIfVar(derivative_t derivative)
         || ('A' <= current_symbol && current_symbol >= 'Z')
         || (current_symbol == '_'))
     {
-        return true;        
+        return true;
     }
 
     return false;
@@ -110,7 +111,9 @@ GetP(derivative_t derivative)
     ssize_t return_value = NO_LINK;
     operations_e possible_op = OPERATOR_UNDEFINED;
 
-    BufferDump(derivative->buffer);
+    #ifndef NDEBUG
+        BufferDump(derivative->buffer);
+    #endif 
 
     if (current_symbol == '(')
     {
@@ -188,7 +191,7 @@ GetT(derivative_t derivative)
         SkipSpacesInBuffer(derivative->buffer);
 
         switch(operation)
-        {
+       {
             case '*':
                 last_add = MUL(last_add, GetP(derivative));
                 break;
@@ -248,17 +251,31 @@ GetE(derivative_t derivative)
     return last_add;
 }
 
-// ===========================================================================
-
-recursive_decent_return_e
+derivative_return_e
 ConvertToGraph(derivative_t derivative)
 { 
-    GetE(derivative);
+    ssize_t readen_node = GetE(derivative);
 
+    if ((readen_node == NO_LINK) || IF_DERIVATIVE_FAILED)
+    {
+        const char* error_read_message = RED "Error was occupied in reading." 
+                                             "Buffer dump:\n";
+
+        fprintf(stderr, "%s", error_read_message);
+        BufferDump(derivative->buffer);
+    }
+
+    if (ForceConnect(derivative->ariphmetic_tree, readen_node, 0,
+                                            EDGE_DIR_LEFT) != TREE_RETURN_SUCCESS)
+    {
+        return DERIVATIVE_RETURN_TREE_ERROR;
+    }
+
+    #ifndef NDEBUG
     BufferDump(derivative->buffer);
-    TreeDump(derivative->ariphmetic_tree);
+    #endif 
 
-    return RECURSIVE_DECENT_SUCCESS; 
+    return DERIVATIVE_RETURN_SUCCESS; 
 }
 
 #undef CURRENT_STRING

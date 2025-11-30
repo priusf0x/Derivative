@@ -34,9 +34,8 @@ const char* const  OPERATION_STR_ARRAY[] =
      "^",
      "ln",
      "exp"};
+     
 const size_t OPERATION_COUNT = sizeof(OPERATION_STR_ARRAY) / sizeof(OPERATION_STR_ARRAY[0]);
-
-// struct variable_e
 
 union expression_u
 {

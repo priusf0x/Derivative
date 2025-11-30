@@ -9,36 +9,19 @@
 #define PARENT_CONNECTION(__X)  derivative->ariphmetic_tree->nodes_array[__X].parent_connection
 
 ssize_t
-DerivativeAddNode(derivative_t      derivative,
-                  ssize_t           current_node,
-                  expression_s*     expr,
-                  edge_dir_e        dir)
-{
-    ASSERT(derivative != NULL);
-    ASSERT(expr != NULL);
-
-    node_s new_node = {.parent_index      = current_node,
-                       .parent_connection = dir,
-                       .right_index       = NO_LINK,
-                       .left_index        = NO_LINK,
-                       .node_value        = *expr,
-                       .index_in_tree     = NO_LINK};
-
-    TreeAddNode(derivative->ariphmetic_tree, &new_node);
-
-    return NO_LINK;
-}
-
-ssize_t
 DerivativeCopy(derivative_t derivative,
                ssize_t      src)
 {
     ASSERT(derivative != NULL);
+    RETURN_NO_LINK_IF_ERROR;
 
     ssize_t new_index = 0;
 
-    CopySubgraph(derivative->ariphmetic_tree, NO_LINK, 
-                 src, &new_index, EDGE_DIR_NO_DIRECTION);
+    if (CopySubgraph(derivative->ariphmetic_tree, NO_LINK, 
+                     src, &new_index, EDGE_DIR_NO_DIRECTION) != 0)
+    {
+        derivative->error = DERIVATIVE_RETURN_TREE_ERROR;
+    }
 
     return new_index;
 }
@@ -48,6 +31,7 @@ DerivativeAddConst(derivative_t derivative,
                    double       value)
 {
     ASSERT(derivative != NULL);
+    RETURN_NO_LINK_IF_ERROR;
 
     node_s op_node = {.parent_index  = NO_LINK,
                       .right_index   = NO_LINK,
@@ -56,16 +40,20 @@ DerivativeAddConst(derivative_t derivative,
                                         .expression_type = EXPRESSION_TYPE_CONST},
                       .index_in_tree = NO_LINK};    
 
-    TreeAddNode(derivative->ariphmetic_tree, &op_node);
+    if (TreeAddNode(derivative->ariphmetic_tree, &op_node) != 0)
+    {
+        derivative->error = DERIVATIVE_RETURN_TREE_ERROR;
+    }
 
-    return (ssize_t) op_node.index_in_tree;
+    return op_node.index_in_tree;
 }
 
 ssize_t 
 DerivativeAddVar(derivative_t derivative,
-                 char         value)                   //FIXME -  char usage  
+                 char         value)
 {
     ASSERT(derivative != NULL);
+    RETURN_NO_LINK_IF_ERROR;
 
     node_s op_node = {.parent_index  = NO_LINK,
                       .right_index   = NO_LINK,
@@ -74,10 +62,13 @@ DerivativeAddVar(derivative_t derivative,
                                         .expression_type = EXPRESSION_TYPE_VAR},
                       .index_in_tree = NO_LINK};    
 
-    TreeAddNode(derivative->ariphmetic_tree, &op_node);
+    if (TreeAddNode(derivative->ariphmetic_tree, &op_node) != 0)
+    {
+        derivative->error = DERIVATIVE_RETURN_TREE_ERROR;
+    }
 
 
-    return (ssize_t) op_node.index_in_tree;
+    return op_node.index_in_tree;
 }
 
 ssize_t 
@@ -87,6 +78,7 @@ DerivativeAddOperation(derivative_t derivative,
                        operations_e operation)
 {
     ASSERT(derivative != NULL);
+    RETURN_NO_LINK_IF_ERROR;
 
     node_s op_node = {.parent_index  = NO_LINK,
                       .right_index   = second_node,
@@ -95,9 +87,10 @@ DerivativeAddOperation(derivative_t derivative,
                                         .expression_type = EXPRESSION_TYPE_OPERATOR},
                       .index_in_tree = NO_LINK};    
 
-    TreeAddNode(derivative->ariphmetic_tree, &op_node);
+    if (TreeAddNode(derivative->ariphmetic_tree, &op_node) != 0)
+    {
+        derivative->error = DERIVATIVE_RETURN_TREE_ERROR;
+    }
 
-    return (ssize_t) op_node.index_in_tree;
+    return op_node.index_in_tree;
 }
-
-

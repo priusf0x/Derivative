@@ -126,7 +126,7 @@ SimplifyNeutralMultipliers(derivative_t derivative,
 //         switch(node.node_value.expression_type)
 //         {
 //             case OPERATOR_PLUS:
-//                 break;
+                
 
 //             case OPERATOR_MINUS:
 //                 break;
