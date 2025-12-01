@@ -9,4 +9,8 @@ ssize_t
 SimplifyNeutralMultipliers(derivative_t derivative,
                            ssize_t      current_node);
 
+ssize_t
+SimplifyConst(derivative_t derivative,
+              ssize_t      current_node);
+
 #endif // SIMPLIFY_H

@@ -23,7 +23,7 @@ enum operations_e
     OPERATOR_EXP       = 9
 };
 
-const char* const  OPERATION_STR_ARRAY[] = 
+const char* const  OPERATION_STR_ARRAY[] = // сделать в условную компиляцию
     {NULL,
      "+",
      "-",
@@ -34,7 +34,7 @@ const char* const  OPERATION_STR_ARRAY[] =
      "^",
      "ln",
      "exp"};
-     
+
 const size_t OPERATION_COUNT = sizeof(OPERATION_STR_ARRAY) / sizeof(OPERATION_STR_ARRAY[0]);
 
 union expression_u

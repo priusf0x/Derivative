@@ -32,16 +32,15 @@ main()
     ConvertToGraph(derivative);    
 
     LogDeritativeInLatex(derivative, 0, NULL);
-
-
-    // TreeDump(derivative->ariphmetic_tree);    
+ 
     ssize_t output = TakeExpressionDerivative(derivative, 0);   
     derivative->ariphmetic_tree->nodes_array[output].parent_index = 0;
     derivative->ariphmetic_tree->nodes_array[0].left_index = output;
-    // TreeDump(derivative->ariphmetic_tree);
-    TreeDump(derivative->ariphmetic_tree);
+
     SimplifyNeutralMultipliers(derivative, 0);
-   
+  
+    SimplifyConst(derivative, 0);
+
     LogDeritativeInLatex(derivative, 0, NULL);
 
     DerivativeDestroy(&derivative);

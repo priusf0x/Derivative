@@ -111,7 +111,7 @@ GetN(derivative_t derivative)
     
     SkipSpacesInBuffer(derivative->buffer);
 
-    return CONST(value);
+    return CONST__(value);
 }
 
 static ssize_t
@@ -175,7 +175,7 @@ GetP(derivative_t derivative)
         SkipNSymbols(derivative->buffer, 1);
         SkipSpacesInBuffer(derivative->buffer);
 
-        return VAR(variable);
+        return VAR__(variable);
     }
     else 
     {
@@ -210,15 +210,15 @@ GetT(derivative_t derivative)
         switch(operation)
        {
             case '*':
-                last_add = MUL(last_add, GetP(derivative));
+                last_add = MUL__(last_add, GetP(derivative));
                 break;
 
             case '/':
-                last_add = DIV(last_add, GetP(derivative));
+                last_add = DIV__(last_add, GetP(derivative));
                 break;
 
             case '^':
-                last_add = POW(last_add, GetP(derivative));
+                last_add = POW__(last_add, GetP(derivative));
                 break;
 
             default: derivative->error = DERIVATIVE_RETURN_READ_ERROR;  
@@ -257,11 +257,11 @@ GetE(derivative_t derivative)
         switch(operation)
         {
             case '+':
-                last_add = SUM(last_add, GetT(derivative));
+                last_add = SUM__(last_add, GetT(derivative));
                 break;
 
             case '-':
-                last_add = SUB(last_add, GetT(derivative));
+                last_add = SUB__(last_add, GetT(derivative));
                 break;
 
             default: derivative->error = DERIVATIVE_RETURN_READ_ERROR;  

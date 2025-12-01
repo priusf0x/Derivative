@@ -14,52 +14,52 @@
 static ssize_t 
 TakeConstDerivative(derivative_t derivative,
                     ssize_t      current_node)
-{ REPLACE(CONST(0)); }
+{ REPLACE(CONST__(0)); }
 
 static ssize_t
 TakeVarDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(CONST(1)); }
+{ REPLACE(CONST__(1)); }
 
 static ssize_t 
 TakePlusDerivative(derivative_t derivative,
                    ssize_t      current_node)
-{ REPLACE(SUM(D(cL), D(cR))); }
+{ REPLACE(SUM__(D__(c_L), D__(c_R))); }
 
 static ssize_t 
 TakeMinusDerivative(derivative_t derivative,
                     ssize_t      current_node)
-{ REPLACE(SUB(D(cL), D(cR))); }
+{ REPLACE(SUB__(D__(c_L), D__(c_R))); }
 
 static ssize_t 
 TakeMulDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(SUM(MUL(cL, D(cR)), MUL(D(cL), cR))); }
+{ REPLACE(SUM__(MUL__(c_L, D__(c_R)), MUL__(D__(c_L), c_R))); }
 
 static ssize_t 
 TakeDivDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(DIV(SUB( MUL(cL, D(cR)), MUL(D(cL), cR)), POW(cR, CONST(2)))); }
+{ REPLACE(DIV__(SUB__( MUL__(c_L, D__(c_R)), MUL__(D__(c_L), c_R)), POW__(c_R, CONST__(2)))); }
 
 static ssize_t 
 TakeSinDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(MUL(D(cL), COS(cL)));}
+{ REPLACE(MUL__(D__(c_L), COS__(c_L)));}
 
 static ssize_t 
 TakeCosDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(MUL(D(cL), MUL(CONST(-1), SIN(cL)))); }
+{ REPLACE(MUL__(D__(c_L), MUL__(CONST__(-1), SIN__(c_L)))); }
 
 static ssize_t 
 TakeLnDerivative(derivative_t derivative,
                  ssize_t      current_node)
-{ REPLACE(MUL(D(cL), DIV(CONST(1), cL))); }
+{ REPLACE(MUL__(D__(c_L), DIV__(CONST__(1), c_L))); }
 
 static ssize_t 
 TakeExpDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(MUL(D(cL), EXP(cL))); }
+{ REPLACE(MUL__(D__(c_L), EXP__(c_L))); }
 
 struct function_derivative_s
 {

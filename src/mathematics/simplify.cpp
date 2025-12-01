@@ -3,10 +3,11 @@
 #include <stdlib.h>
 
 #include "Assert.h"
-#include "derivative.h"
-#include "tools.h"
-#include "expression.h"
 #include "derivative_defines.h"
+#include "derivative.h"
+#include "expression.h"
+#include "math.h"
+#include "tools.h"
 
 // ======================= SIMPLIFICATION_HELPERS =============================
 
@@ -14,7 +15,7 @@ inline static bool
 CheckIfType(const derivative_t derivative,   
             ssize_t            current_node,
             expression_type_e  expression)
-{return derivative->ariphmetic_tree->nodes_array[current_node].
+{;return derivative->ariphmetic_tree->nodes_array[current_node].
                         node_value.expression_type == expression;}
 #define CHECK_IF_TYPE(_EXPR_, _NODE_) CheckIfType(derivative, _NODE_, _EXPR_)
 
@@ -42,32 +43,152 @@ CheckNodeConstAndEq(const derivative_t derivative,
 
 // =========================== SIMPLIFICATION =================================
 
+static void  
+ChangeChildNode(derivative_t derivative,
+                ssize_t      current_node,
+                ssize_t (*recursive_function) (derivative_t, ssize_t))
+{
+    node_s* node = derivative->ariphmetic_tree->nodes_array +current_node;
+
+    ssize_t new_right = recursive_function(derivative, node->right_index);
+    node = derivative->ariphmetic_tree->nodes_array + current_node;
+    if (new_right != NO_LINK)
+    {
+        NODE(new_right)->parent_index = current_node;
+        NODE(new_right)->parent_connection = EDGE_DIR_RIGHT;
+    }
+
+    ssize_t new_left = recursive_function(derivative, node->left_index);
+    node = derivative->ariphmetic_tree->nodes_array + current_node;
+    if (new_left != NO_LINK)
+    {
+        NODE(new_left)->parent_index = current_node;
+        NODE(new_left)->parent_connection = EDGE_DIR_LEFT;
+    }
+
+    node->left_index = new_left;
+    node->right_index = new_right;
+}
+
 // ======================= CONSTANT_SIMPLIFICATION ============================
 
+inline static ssize_t
+CalculateSum(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(GET_CONST_VAL__(L_O) + GET_CONST_VAL__(R_O))); } 
 
+inline static ssize_t
+CalculateSub(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(GET_CONST_VAL__(L_O) - GET_CONST_VAL__(R_O))); } 
 
+inline static ssize_t
+CalculateMul(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(GET_CONST_VAL__(L_O) * GET_CONST_VAL__(R_O))); } 
+
+inline static ssize_t
+CalculateDiv(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(GET_CONST_VAL__(L_O) / GET_CONST_VAL__(R_O))); } 
+
+inline static ssize_t
+CalculateSin(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(sin(GET_CONST_VAL__(L_O)))); } 
+
+inline static ssize_t
+CalculateCos(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(cos(GET_CONST_VAL__(L_O)))); } 
+
+inline static ssize_t
+CalculatePow(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(pow(GET_CONST_VAL__(L_O), GET_CONST_VAL__(R_O)))); } 
+
+inline static ssize_t
+CalculateLn(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(log(GET_CONST_VAL__(L_O)))); } 
+
+inline static ssize_t
+CalculateExp(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(log(GET_CONST_VAL__(L_O)))); } 
+
+struct op_calculation // maybe use conditional compilation 
+{
+    operations_e operation;
+    ssize_t (*calc_function) (derivative_t, ssize_t);
+};
+
+op_calculation CALC_FUNCTION_ARRAY[]
+{  //OPERATION           //CALCULATION_FUNCTIONS
+    {OPERATOR_UNDEFINED,   NULL        },
+    {OPERATOR_PLUS     ,   CalculateSum},
+    {OPERATOR_MINUS    ,   CalculateSub},
+    {OPERATOR_MUL      ,   CalculateMul},
+    {OPERATOR_DIV      ,   CalculateDiv},
+    {OPERATOR_SIN      ,   CalculateSin},
+    {OPERATOR_COS      ,   CalculateCos},
+    {OPERATOR_POWER    ,   CalculatePow},
+    {OPERATOR_LN       ,   CalculateLn },
+    {OPERATOR_EXP      ,   CalculateExp}
+};
+
+ssize_t
+SimplifyConst(derivative_t derivative,
+              ssize_t      current_node)
+{
+    ASSERT(derivative);
+
+    if (current_node == NO_LINK)
+    {
+        return NO_LINK;
+    }
+
+    #ifndef NDEBUG
+        TreeDump(derivative->ariphmetic_tree);
+    #endif
+
+    ChangeChildNode(derivative, current_node, SimplifyConst);
+
+    RETURN_NO_LINK_IF_ERROR;
+
+    expression_u node_value = derivative->ariphmetic_tree->
+                                nodes_array[current_node].node_value.expression;
+
+    if (CHECK_IF_TYPE(EXPRESSION_TYPE_OPERATOR, current_node))
+    {
+        if (node_value.operation == OPERATOR_UNDEFINED)
+        {
+            derivative->error = DERIVATIVE_RETURN_UNDEFINED_OPERATION;
+            return NO_LINK;
+        }
+
+        if (((R_O == NO_LINK) || CHECK_IF_TYPE(EXPRESSION_TYPE_CONST, R_O))
+            && ((L_O == NO_LINK || CHECK_IF_TYPE(EXPRESSION_TYPE_CONST, L_O))))
+        {
+            return CALC_FUNCTION_ARRAY[node_value.operation].
+                            calc_function(derivative, current_node);
+        }
+    }
+
+    return current_node;
+}
 
 // ========================== NEUTRAL_SIMPLIFICATION ==========================
 
 static ssize_t
 SimplifyMultiplicationOnZero(derivative_t derivative,
                              ssize_t      current_node)
-{ REPLACE(CONST(0)); }
+{ REPLACE(CONST__(0)); }
 
 static ssize_t
 SimplifySumWithZero(derivative_t derivative,
                     ssize_t      current_node)
 {
     node_s node = derivative->ariphmetic_tree->nodes_array[current_node];
-    fprintf(stderr, "%ld %ld %ld", current_node, node.left_index, node.right_index);
 
     if (CHECK_ZERO(node.left_index))
     {
-        REPLACE(cR);
+        REPLACE(c_R);
     }
     else if(CHECK_ZERO(node.right_index))
     {
-        REPLACE(cL);
+        REPLACE(c_L);
     }
 
     return NO_LINK;
@@ -81,11 +202,11 @@ SimplifySubWithZero(derivative_t derivative,
 
     if (CHECK_ZERO(node.left_index))
     {
-        REPLACE(MUL(CONST(-1), cR));
+        REPLACE(MUL__(CONST__(-1), c_R));
     }
     else if(CHECK_ZERO(node.right_index))
     {
-        REPLACE(cL);
+        REPLACE(c_L);
     }
 
     return NO_LINK;
@@ -99,16 +220,16 @@ SimplifyMulOnOne(derivative_t derivative,
 
     if (CHECK_ONE(node.left_index))
     {
-        REPLACE(cR);
+        REPLACE(c_R);
     }
     else if(CHECK_ONE(node.right_index))
     {
-        REPLACE(cL);
+        REPLACE(c_L);
     }
 
     return NO_LINK;
 }
-#include "color.h"
+
 ssize_t
 SimplifyNeutralMultipliers(derivative_t derivative,
                            ssize_t      current_node)
@@ -128,23 +249,7 @@ SimplifyNeutralMultipliers(derivative_t derivative,
 
     node_s* node = &(derivative->ariphmetic_tree->nodes_array[current_node]);
     
-    ssize_t new_right = SimplifyNeutralMultipliers(derivative, node->right_index);
-    node = derivative->ariphmetic_tree->nodes_array + current_node;
-    node->right_index = new_right;
-    if (new_right != NO_LINK)
-    {
-        NODE(new_right)->parent_index = current_node;
-        NODE(new_right)->parent_connection = EDGE_DIR_RIGHT;
-    }
-
-    ssize_t new_left = SimplifyNeutralMultipliers(derivative, node->left_index);
-    node = derivative->ariphmetic_tree->nodes_array + current_node;
-    node->left_index = new_left;
-    if (new_left != NO_LINK)
-    {
-        node->parent_index = current_node;
-        node->parent_connection = EDGE_DIR_LEFT;
-    }
+    ChangeChildNode(derivative, current_node, SimplifyNeutralMultipliers);
 
     RETURN_NO_LINK_IF_ERROR;
 
@@ -179,44 +284,3 @@ SimplifyNeutralMultipliers(derivative_t derivative,
 
 #undef CHECK_ONE
 #undef CHECK_ZERO
-
-// simplify_return_e
-// SimplifyDoubles(derivative_t derivative,
-//                 ssize_t      current_node)
-// {
-//     ASSERT(derivative != NULL);
-
-//     simplify_return_e output = SIMPLIFY_RETURN_SUCCESS;
-    
-//     node_s node = derivative->ariphmetic_tree->nodes_array[current_node];
-
-//     if (node.right_index != NO_LINK)
-//     {
-//         SimplifyNeutralMultipliers(derivative, node.right_index);
-//     }
-//     if (node.left_index != NO_LINK)
-//     {
-//         SimplifyNeutralMultipliers(derivative, node.left_index);
-//     }
-
-//     if (CheckIfOperator(derivative, current_node) 
-//         && CheckIfConst(derivative, node.right_index)
-//         && CheckIfConst(derivative, node.left_index))
-//     {
-//         switch(node.node_value.expression_type)
-//         {
-//             case OPERATOR_PLUS:
-                
-
-//             case OPERATOR_MINUS:
-//                 break;
-    
-//             case OPERATOR_MUL:
-//                 break;
-//         }
-//     }
-
-//     return SIMPLIFY_RETURN_SUCCESS;
-// }
-
-// =============================== HELPERS ====================================

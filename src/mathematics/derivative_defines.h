@@ -29,7 +29,7 @@ DerivativeAddVar(derivative_t derivative, char value);
 #define PARENT_INDEX(_X_) NODE(_X_)->parent_index
 #define PARENT_CONNECTION(_X_)  NODE(_X_)->parent_connection
 
-#define REPLACE(_X__) do {ssize_t output = (_X__);\
+#define REPLACE(_N0DE__) do {ssize_t output = (_N0DE__);\
                         ssize_t parent_index = NO_LINK;\
                         edge_dir_e parent_connection = EDGE_DIR_NO_DIRECTION;\
                          if (current_node != NO_LINK)\
@@ -43,30 +43,35 @@ DerivativeAddVar(derivative_t derivative, char value);
                          return output;\
                         } while (0)
 
-#define D(_X_) TakeExpressionDerivative(derivative, (_X_))
-#define COPY(_SRC_) DerivativeCopy(derivative, (_SRC_))
+#define D__(_X_) TakeExpressionDerivative(derivative, (_X_))
+#define COPY__(_SRC_) DerivativeCopy(derivative, (_SRC_))
 
-#define cR COPY(RIGHT_INDEX(current_node))
-#define cL COPY(LEFT_INDEX(current_node))
+#define c_R COPY__(RIGHT_INDEX(current_node))
+#define c_L COPY__(LEFT_INDEX(current_node))
 
-#define CONST(_CONST_) DerivativeAddConst(derivative, (_CONST_))   
-#define VAR(_VAR_)     DerivativeAddVar(derivative, (_VAR_))
+#define R_O derivative->ariphmetic_tree->nodes_array[current_node].right_index 
+#define L_O derivative->ariphmetic_tree->nodes_array[current_node].left_index
+#define GET_CONST_VAL__(_X__)  derivative->ariphmetic_tree->nodes_array[_X__]\
+                                    .node_value.expression.constant
 
-#define SUM(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
+#define CONST__(_CONST_) DerivativeAddConst(derivative, (_CONST_))   
+#define VAR__(_VAR_)     DerivativeAddVar(derivative, (_VAR_))
+
+#define SUM__(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                      (_SECOND_),  OPERATOR_PLUS)
-#define SUB(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
+#define SUB__(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_MINUS)
-#define MUL(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
+#define MUL__(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_MUL)
-#define DIV(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
+#define DIV__(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_DIV)   
-#define POW(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
+#define POW__(_FIRST_, _SECOND_) DerivativeAddOperation(derivative, (_FIRST_),\
                                                       (_SECOND_), OPERATOR_POWER)
-#define SIN(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+#define SIN__(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
                                                       NO_LINK,    OPERATOR_SIN)
-#define COS(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+#define COS__(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
                                                       NO_LINK,    OPERATOR_COS)
-#define EXP(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
+#define EXP__(_FIRST_)           DerivativeAddOperation(derivative, (_FIRST_),\
                                                       NO_LINK,    OPERATOR_EXP)
                                                     
 #endif // DERIVATIVE_DEFINES
