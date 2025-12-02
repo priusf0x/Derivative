@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+// ============================ ENUMS AND STRUCTS =============================
+
 enum expression_type_e
 {
     EXPRESSION_TYPE_UNDEFINED,
@@ -23,20 +25,6 @@ enum operations_e
     OPERATOR_EXP       = 9
 };
 
-const char* const  OPERATION_STR_ARRAY[] = // сделать в условную компиляцию
-    {NULL,
-     "+",
-     "-",
-     "*",
-     "/",
-     "sin",
-     "cos",
-     "^",
-     "ln",
-     "exp"};
-
-const size_t OPERATION_COUNT = sizeof(OPERATION_STR_ARRAY) / sizeof(OPERATION_STR_ARRAY[0]);
-
 union expression_u
 {
     double       constant;
@@ -49,5 +37,7 @@ struct expression_s
     expression_u      expression;          
     expression_type_e expression_type;
 };
+
+// ============================================================================
 
 #endif // EXPRESSION_H

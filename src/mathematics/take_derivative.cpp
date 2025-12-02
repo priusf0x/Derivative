@@ -5,7 +5,6 @@
 #include "derivative_defines.h"
 #include "latex_dump.h"
 #include "tree.h"
-#include "tools.h"
 #include "latex_dump.h"
 #include "simplify.h"
 
@@ -67,22 +66,10 @@ struct function_derivative_s
     ssize_t (*derivative) (derivative_t, ssize_t);
 };
 
-const function_derivative_s OP_DERIVATIVES[] =
-{//  OPERATIONS            DERIVATIVES
-    {OPERATOR_UNDEFINED,   NULL               },
-    {OPERATOR_PLUS     ,   TakePlusDerivative },
-    {OPERATOR_MINUS    ,   TakeMinusDerivative},
-    {OPERATOR_MUL      ,   TakeMulDerivative  },
-    {OPERATOR_DIV      ,   TakeDivDerivative  },
-    {OPERATOR_SIN      ,   TakeSinDerivative  },
-    {OPERATOR_COS      ,   TakeCosDerivative  },
-    {OPERATOR_POWER    ,   NULL               },
-    {OPERATOR_LN       ,   TakeLnDerivative   },
-    {OPERATOR_EXP      ,   TakeExpDerivative  }
-};
-const size_t DERIVATIVES_COUNT = sizeof(OP_DERIVATIVES) / sizeof(OP_DERIVATIVES[0]);
+#define _DERIVATOR_
+#include "operation_info.h"
 
-// =========================== MAIN_DERIVATIVE ================================
+// ========================== MAIN_DERIVATIVE ================================
 
 ssize_t  // TODO: make static and add main take derivative function
 TakeExpressionDerivative(derivative_t derivative,
@@ -120,8 +107,8 @@ TakeExpressionDerivative(derivative_t derivative,
             return NO_LINK;
         }
 
-        return OP_DERIVATIVES[node_value.expression.operation]
-                                        .derivative(derivative, current_node);
+        return OPERATION_INFO[node_value.expression.operation]
+                            .op_function(derivative, current_node);
     }
     
     return NO_LINK;

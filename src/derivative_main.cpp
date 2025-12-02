@@ -11,6 +11,14 @@
 
 static const char* formula_file_name = "pletnev.zov";
 
+// WISH_LIST
+// 1 priority Strings_var, name_table, ask user variable
+// 2 priotity clean_main, make functions 
+// 3 priority Fill function, calculation with vars
+// 4 GRRRRRROROOOOOOOQQQQQ 
+// 4 
+
+
 int
 main()
 {

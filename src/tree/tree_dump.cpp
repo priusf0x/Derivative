@@ -9,6 +9,7 @@
 #include "tools.h"
 #include "stack.h"
 #include "expression.h"
+#include "operation_info.h"
 
 static tree_return_e TreeDot(const tree_t tree, const char* current_time);
 static void DrawNode(const node_s* node, FILE* dot_file);
@@ -103,7 +104,8 @@ PrintElementInString(const expression_s* expr,
 
         case EXPRESSION_TYPE_OPERATOR:
             snprintf(address, string_length, "operation %s", 
-                     OPERATION_STR_ARRAY[expr->expression.operation]); 
+                     OPERATION_INFO[expr->expression.operation].
+                                        operation_name.string_source); 
             break;
 
         case EXPRESSION_TYPE_VAR:
@@ -123,9 +125,12 @@ PrintElementsInfo(const tree_t tree,
     ASSERT(file_output != NULL);
     for(size_t index = 0; index < tree->nodes_capacity; index++) 
     {
-        fprintf(file_output, "<p> <h4> <li>index in table: %ld\n <br/>", tree->nodes_array[index].index_in_tree);
-        fprintf(file_output, "left index: %ld \n <br/>", tree->nodes_array[index].left_index);
-        fprintf(file_output, "right index: %ld\n <br/>", tree->nodes_array[index].right_index);
+        fprintf(file_output, "<p> <h4> <li>index in table: %ld\n <br/>",
+                tree->nodes_array[index].index_in_tree);
+        fprintf(file_output, "left index: %ld \n <br/>",    
+                tree->nodes_array[index].left_index);
+        fprintf(file_output, "right index: %ld\n <br/>", 
+                tree->nodes_array[index].right_index);
 
         const size_t max_string_size = 30;
         char element_string[max_string_size] = "sosal";
@@ -135,8 +140,10 @@ PrintElementsInfo(const tree_t tree,
 
         fprintf(file_output, "value: %s", element_string);
         fprintf(file_output, "<br/>");
-        fprintf(file_output, "parent_index: %ld\n\n <br/>", tree->nodes_array[index].parent_index);
-        fprintf(file_output, "parent_index: %d\n\n </li></p></h4>", tree->nodes_array[index].parent_connection);
+        fprintf(file_output, "parent_index: %ld\n\n <br/>", 
+                tree->nodes_array[index].parent_index);
+        fprintf(file_output, "parent_index: %d\n\n </li></p></h4>",
+                 tree->nodes_array[index].parent_connection);
     }
 }
 

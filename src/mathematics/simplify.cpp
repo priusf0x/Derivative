@@ -114,19 +114,8 @@ struct op_calculation // maybe use conditional compilation
     ssize_t (*calc_function) (derivative_t, ssize_t);
 };
 
-op_calculation CALC_FUNCTION_ARRAY[]
-{  //OPERATION           //CALCULATION_FUNCTIONS
-    {OPERATOR_UNDEFINED,   NULL        },
-    {OPERATOR_PLUS     ,   CalculateSum},
-    {OPERATOR_MINUS    ,   CalculateSub},
-    {OPERATOR_MUL      ,   CalculateMul},
-    {OPERATOR_DIV      ,   CalculateDiv},
-    {OPERATOR_SIN      ,   CalculateSin},
-    {OPERATOR_COS      ,   CalculateCos},
-    {OPERATOR_POWER    ,   CalculatePow},
-    {OPERATOR_LN       ,   CalculateLn },
-    {OPERATOR_EXP      ,   CalculateExp}
-};
+#define _CALCULATION_
+#include "operation_info.h"
 
 ssize_t
 SimplifyConst(derivative_t derivative,
@@ -161,8 +150,8 @@ SimplifyConst(derivative_t derivative,
         if (((R_O == NO_LINK) || CHECK_IF_TYPE(EXPRESSION_TYPE_CONST, R_O))
             && ((L_O == NO_LINK || CHECK_IF_TYPE(EXPRESSION_TYPE_CONST, L_O))))
         {
-            return CALC_FUNCTION_ARRAY[node_value.operation].
-                            calc_function(derivative, current_node);
+            return OPERATION_INFO[node_value.operation]
+                        .op_function(derivative, current_node);
         }
     }
 

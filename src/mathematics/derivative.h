@@ -35,6 +35,4 @@ typedef derivative_s* derivative_t;
 derivative_return_e DerivativeInit(derivative_t* deritative, size_t start_tree_size, const char* file_name);
 derivative_return_e DerivativeDestroy(derivative_t* deritative);
 
-// ============================================================================
-
 #endif // ARIPHMETIC_OPERATIONS_H
