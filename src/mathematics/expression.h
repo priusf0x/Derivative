@@ -1,6 +1,9 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+#include "my_string.h"
+#include "name_space.h"
+
 // ============================ ENUMS AND STRUCTS =============================
 
 enum expression_type_e
@@ -25,11 +28,17 @@ enum operations_e
     OPERATOR_EXP       = 9
 };
 
+struct variable_s
+{
+    string_s variable_name;  
+    size_t   name_table_index;
+};
+
 union expression_u
 {
     double       constant;
     operations_e operation;
-    char         variable;     
+    variable_s   variable;     
 };
 
 struct expression_s

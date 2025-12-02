@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "expression.h"
-
 struct string_s
 {
     char*  string_source;
@@ -30,8 +28,12 @@ size_t SkipSpaces(const char* string, size_t current_position);
 size_t SkipNotSpaces(const char* string, size_t current_position);
 void PrintString(const string_s* string, FILE* file_output);
 void StringDestroy(string_s* string);
-bool ExStrCmp(const char* string, const char* example,  
+bool StrCmpWithEnding(const char* string, const char* example,  
               size_t lenght, const char* end_symbols);
+bool CheckIfSymbVar(char symbol);
+void ReadVarString(char* src, string_s* string_dst);
+
+unsigned int MurmurHash2 (char * key, unsigned int len);
 
 // ============================================================================
 

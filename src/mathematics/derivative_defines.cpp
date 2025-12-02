@@ -47,15 +47,15 @@ DerivativeAddConst(derivative_t derivative,
 
 ssize_t 
 DerivativeAddVar(derivative_t derivative,
-                 char         value)
-{
+                 variable_s*  variable)
+{ //FIXME -  add work with name space here
     ASSERT(derivative != NULL);
     RETURN_NO_LINK_IF_ERROR;
 
     node_s var_node = {.parent_index  = NO_LINK,
                       .right_index   = NO_LINK,
                       .left_index    = NO_LINK,
-                      .node_value    = {.expression = {.variable = value},
+                      .node_value    = {.expression = {.variable = *variable},
                                         .expression_type = EXPRESSION_TYPE_VAR},
                       .index_in_tree = NO_LINK};    
 

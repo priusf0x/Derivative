@@ -32,7 +32,7 @@ main()
     if ((error_number = DerivativeInit(&derivative, start_tree_size, 
                                         formula_file_name)) != 0)
     {   
-        printf("huyna %d\n", error_number);
+        printf("R->L %d\n", error_number);
 
         return error_number;
     }
@@ -41,15 +41,37 @@ main()
 
     LogDeritativeInLatex(derivative, 0, NULL);
  
-    ssize_t output = TakeExpressionDerivative(derivative, 0);   
-    derivative->ariphmetic_tree->nodes_array[output].parent_index = 0;
-    derivative->ariphmetic_tree->nodes_array[0].left_index = output;
+    TreeDump(derivative->ariphmetic_tree);
 
-    SimplifyNeutralMultipliers(derivative, 0);
+    name_table_t name_table = NULL;
+
+    InitNameTable(&name_table, 3);
+
+    string_s new_name_1 = {"Hello", 5};
+    string_s new_name_2 = {"Bye", 3};
+    string_s new_name_3 = {"Hello", 5};
+    string_s new_name_4 = {"Hello", 5};
+    string_s new_name_5 = {"Bye", 3};
+    
+    AddNameInTable(&new_name_1, 3, name_table);
+    AddNameInTable(&new_name_2, 3, name_table);
+    AddNameInTable(&new_name_3, 3, name_table);
+    AddNameInTable(&new_name_4, 3, name_table);
+    AddNameInTable(&new_name_5, 3, name_table);
+
+    NameTableDump(name_table);
+
+    DestroyNameTable(&name_table);
+
+    // ssize_t output = TakeExpressionDerivative(derivative, 0);   
+    // derivative->ariphmetic_tree->nodes_array[output].parent_index = 0;
+    // derivative->ariphmetic_tree->nodes_array[0].left_index = output;
+
+    // SimplifyNeutralMultipliers(derivative, 0);
   
-    SimplifyConst(derivative, 0);
+    // SimplifyConst(derivative, 0);
 
-    LogDeritativeInLatex(derivative, 0, NULL);
+    // LogDeritativeInLatex(derivative, 0, NULL);
 
     DerivativeDestroy(&derivative);
 

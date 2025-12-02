@@ -164,9 +164,10 @@ WriteVarInFile(const derivative_t deritative,
     ASSERT(deritative != NULL);
     ASSERT(output_file != NULL);
 
-    fprintf(output_file, "%c",
-            deritative->ariphmetic_tree->
-                nodes_array[current_node].node_value.expression.variable);
+    string_s string = deritative->ariphmetic_tree->nodes_array[current_node]
+                            .node_value.expression.variable.variable_name;
+
+    PrintString(&string, output_file);
 }
 
 void static 

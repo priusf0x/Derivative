@@ -96,10 +96,13 @@ PrintElementInString(const expression_s* expr,
     ASSERT(expr != NULL);
     ASSERT(address != NULL);
 
+    string_s var_str = {};
+
     switch(expr->expression_type)
     {
         case EXPRESSION_TYPE_CONST:
-            snprintf(address, string_length, "constant %f", expr->expression.constant);
+            snprintf(address, string_length, "constant %f", 
+                        expr->expression.constant);
             break;
 
         case EXPRESSION_TYPE_OPERATOR:
@@ -109,7 +112,9 @@ PrintElementInString(const expression_s* expr,
             break;
 
         case EXPRESSION_TYPE_VAR:
-            snprintf(address, string_length, "variable %c", expr->expression.variable);
+            var_str = expr->expression.variable.variable_name;
+            snprintf(address, string_length, "variable %.*s", 
+                        (int) var_str.string_size, var_str.string_source);
             break;
 
         case EXPRESSION_TYPE_UNDEFINED:

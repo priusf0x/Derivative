@@ -4,37 +4,25 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "Assert.h"
+#include "buffer.h"
+#include "color.h"
 #include "derivative_defines.h"
 #include "derivative.h"
 #include "expression.h"
-#include "buffer.h"
 #include "tree.h"
 #include "tools.h"
-#include "color.h"
 
 // ============================= HELPERS ======================================
 
 #define CURRENT_STRING (derivative->buffer->buffer \
                         + derivative->buffer->current_position)
 
-static bool
-CheckIfVar(derivative_t derivative)
-{
-    char current_symbol = *CURRENT_STRING;
-    if (('a' <= current_symbol && current_symbol >= 'z') 
-        || ('A' <= current_symbol && current_symbol >= 'Z')
-        || (current_symbol == '_'))
-    {
-        return true;
-    }
-
-    return false;
-}
-
 static void 
 SkipSpacesInBuffer(buffer_t buffer)
 {
-    buffer->current_position = SkipSpaces(buffer->buffer, buffer->current_position);
+    buffer->current_position = SkipSpaces(buffer->buffer, 
+                                            buffer->current_position);
 }
 
 static void 
@@ -44,6 +32,20 @@ SkipNSymbols(buffer_t buffer,
     buffer->current_position += n;
 }
 
+static void 
+ReadVarInBuffer(variable_s* var,
+                buffer_t buffer)
+{
+    ASSERT(buffer);
+
+    ReadVarString(buffer->buffer + buffer->current_position,
+                  &var->variable_name);
+
+    buffer->current_position += var->variable_name.string_size;
+    SkipSpacesInBuffer(buffer);
+
+}
+
 struct key_words_function_s 
 {
     const char*  function_name;
@@ -51,7 +53,7 @@ struct key_words_function_s
     operations_e operation;
 };
 
-const struct key_words_function_s FUNCTIONS[] =
+const struct key_words_function_s FUNCTIONS[] = // FIXME: переделать в новую таблицу 
 {// FUNCTION_NAME   NAME_LENGHT        OPERATION
     {       "sin",            3,    OPERATOR_SIN},
     {       "cos",            3,    OPERATOR_COS},
@@ -72,7 +74,7 @@ CheckIfFunction(derivative_t derivative)
 {
     for (size_t index = 0; index < FUNCTIONS_COUNT; index++)
     {
-        if (ExStrCmp(CURRENT_STRING, FUNCTIONS[index].function_name,
+        if (StrCmpWithEnding(CURRENT_STRING, FUNCTIONS[index].function_name,
                      FUNCTIONS[index].name_len, " \r\n\t("))
         {
             SkipNSymbols(derivative->buffer, FUNCTIONS[index].name_len);
@@ -146,7 +148,8 @@ GetP(derivative_t derivative)
         
         return return_value;
     }    
-    else if ((possible_op = CheckIfFunction(derivative)) != OPERATOR_UNDEFINED)
+    else if ((possible_op = CheckIfFunction(derivative)) 
+                != OPERATOR_UNDEFINED)
     {
         if (*CURRENT_STRING != '(')
         {
@@ -169,13 +172,11 @@ GetP(derivative_t derivative)
         return DerivativeAddOperation(derivative, return_value, NO_LINK, 
                                       possible_op);
     }
-    else if (CheckIfVar(derivative)) // FIXME
+    else if (CheckIfSymbVar(*CURRENT_STRING))
     {
-        char variable = *CURRENT_STRING;
-        SkipNSymbols(derivative->buffer, 1);
-        SkipSpacesInBuffer(derivative->buffer);
-
-        return VAR__(variable);
+        variable_s var = {};
+        ReadVarInBuffer(&var, derivative->buffer);
+        return VAR__(&var);
     }
     else 
     {
@@ -277,11 +278,13 @@ GetE(derivative_t derivative)
 derivative_return_e
 ConvertToGraph(derivative_t derivative)
 { 
+    ASSERT(derivative);
+
     ssize_t readen_node = GetE(derivative);
 
     if ((readen_node == NO_LINK) || IF_DERIVATIVE_FAILED)
     {
-        const char* error_read_message = RED      "Error was occupied in reading." 
+        const char* error_read_message = RED      "Error was occupied while reading." 
                                          STANDARD "Buffer dump:\n" ;
 
         fprintf(stderr, "%s", error_read_message);

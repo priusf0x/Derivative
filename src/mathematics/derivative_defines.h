@@ -16,7 +16,7 @@ DerivativeAddOperation(derivative_t derivative, ssize_t first_node,
                        ssize_t second_node, operations_e operation);
 
 ssize_t 
-DerivativeAddVar(derivative_t derivative, char value); 
+DerivativeAddVar(derivative_t derivative, variable_s* value); 
 
 // ================================ DEFINE ====================================
 

@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define MIN(X_1, X_2) ((X_1) < (X_2) ? (X_1) : (X_2))
+#define MAX(X_1, X_2) ((X_1) > (X_2) ? (X_1) : (X_2))
+
 void* recalloc(void*  pointer, size_t current_size, size_t new_size);
 void  GetTime(char*  current_time, const size_t string_size);
 void SystemCall(const char* command_tmp, ... );

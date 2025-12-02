@@ -47,21 +47,51 @@ PrintString(const string_s* string,
 {
     ASSERT(string != NULL);
     ASSERT(file_output != NULL);
-
-    fprintf(file_output, "\"");
+    
     fwrite(string->string_source,
            sizeof(char),
            string->string_size,
            file_output);
-    fprintf(file_output, "\" ");
 }
 
 bool // strncmp but after string must be only allowed symbols  
-ExStrCmp(const char* string, 
+StrCmpWithEnding(const char* string, 
          const char* example, 
          size_t      lenght, 
          const char* end_symbols)
 {
     return (strncmp(string, example, lenght) == 0) 
             && strchr(end_symbols, *(string + lenght));
+}
+
+bool
+CheckIfSymbVar(char symbol)
+{
+    if (('a' <= symbol && symbol >= 'z') 
+        || ('A' <= symbol && symbol >= 'Z')
+        || (symbol == '_'))
+    {
+        return true; 
+    }
+    return false; 
+}
+
+void 
+ReadVarString(char*       src,
+              string_s*   string_dst)
+{
+    ASSERT(src != NULL);
+    ASSERT(string_dst != NULL);
+
+    size_t lenght = 0;
+    char current_symbol = *src;
+
+    while (CheckIfSymbVar(current_symbol))
+    {
+        current_symbol = src[lenght]; 
+        lenght++;
+    }
+
+    *string_dst = {.string_source = src,
+                   .string_size   = lenght -1};
 }
