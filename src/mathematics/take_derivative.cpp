@@ -84,8 +84,12 @@ TakeExpDerivative(derivative_t derivative,
 static ssize_t 
 TakeTgDerivative(derivative_t derivative,
                   ssize_t      current_node)
-{ REPLACE(DIV__(D__(c_L), POW__(COS__(c_L), 2))); }
+{ REPLACE(DIV__(D__(c_L), POW__(COS__(c_L), CONST__(2)))); }
 
+static ssize_t 
+TakeCtgDerivative(derivative_t derivative,
+                  ssize_t      current_node)
+{ REPLACE(DIV__(MUL__(D__(c_L), CONST__(-1)), POW__(SIN__(c_L), CONST__(2)))); }
 
 
 struct function_derivative_s

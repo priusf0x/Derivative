@@ -25,7 +25,9 @@ enum operations_e
     OPERATOR_COS       = 6,
     OPERATOR_POWER     = 7,
     OPERATOR_LN        = 8,
-    OPERATOR_EXP       = 9
+    OPERATOR_EXP       = 9,
+    OPERATOR_TG        = 10,
+    OPERATOR_CTG       = 11
 };
 
 struct variable_s

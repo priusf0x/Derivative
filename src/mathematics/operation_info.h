@@ -38,12 +38,14 @@ const operation_info_s OPERATION_INFO[] =
     {OPERATOR_PLUS     , TURN_OFF( "-"  ,     1)  ,COMP_OPTION(SimplifySum, TakePlusDerivative ), 2, "+"        , 1},
     {OPERATOR_MINUS    , TURN_OFF( "*"  ,     1)  ,COMP_OPTION(SimplifySub, TakeMinusDerivative), 2, "-"        , 1},
     {OPERATOR_MUL      , TURN_OFF( "*"  ,     1)  ,COMP_OPTION(SimplifyMul, TakeMulDerivative  ), 2, "*"        , 2},
-    {OPERATOR_DIV      , TURN_OFF( "/"  ,     1)  ,COMP_OPTION(SimplifyDiv, TakeDivDerivative  ), 2, "\\over"    , 2},
+    {OPERATOR_DIV      , TURN_OFF( "/"  ,     1)  ,COMP_OPTION(SimplifyDiv, TakeDivDerivative  ), 2, "\\over"   , 2},
     {OPERATOR_SIN      ,          {"sin",     3}  ,COMP_OPTION(SimplifySin, TakeSinDerivative  ), 1, "sin"      , 3},
     {OPERATOR_COS      ,          {"cos",     3}  ,COMP_OPTION(SimplifyCos, TakeCosDerivative  ), 1, "cos"      , 3},
     {OPERATOR_POWER    , TURN_OFF( "^"  ,     1)  ,COMP_OPTION(SimplifyPow, TakePowDerivative  ), 2, "^"        , 3},
     {OPERATOR_LN       ,          {"ln" ,     2}  ,COMP_OPTION(SimplifyLn , TakeLnDerivative   ), 1, "ln"       , 3},
-    {OPERATOR_EXP      ,          {"exp",     3}  ,COMP_OPTION(SimplifyExp, TakeExpDerivative  ), 1, "exp"      , 3}
+    {OPERATOR_EXP      ,          {"exp",     3}  ,COMP_OPTION(SimplifyExp, TakeExpDerivative  ), 1, "exp"      , 3},
+    {OPERATOR_TG       ,          {"tg" ,     2}  ,COMP_OPTION(SimplifyTg,  TakeTgDerivative   ), 1, "tg"       , 3},
+    {OPERATOR_CTG      ,          {"ctg",     3}  ,COMP_OPTION(SimplifyCtg, TakeCtgDerivative  ), 1, "ctg"      , 3},
 };
 const size_t OPERATION_COUNT = sizeof(OPERATION_INFO) / sizeof(OPERATION_INFO[0]);
 

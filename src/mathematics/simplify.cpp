@@ -147,6 +147,14 @@ inline static ssize_t
 SimplifyExp(derivative_t derivative, ssize_t current_node)
 { REPLACE(CONST__(exp(GET_CONST_VAL__(L_O)))); } 
 
+inline static ssize_t
+SimplifyTg(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(tan(GET_CONST_VAL__(L_O)))); } 
+
+inline static ssize_t
+SimplifyCtg(derivative_t derivative, ssize_t current_node)
+{ REPLACE(CONST__(1 / tan(GET_CONST_VAL__(L_O)))); } 
+
 struct op_calculation  
 {
     operations_e operation;
